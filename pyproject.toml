@@ -1,0 +1,37 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "sigpac-tools"
+version = "1.0.0"
+authors = [  
+  { name="Juan Carlos Ruiz Ruiz", email="juancaruru@uma.es" },
+]
+description = "Python SIGPAC client"
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Development Status :: 1 - Planning",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: GIS",
+    "Topic :: Utilities"
+]
+dependencies = [
+    "pyproj==3.6.1",
+    "requests==2.32.3"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/KhaosResearch/sigpac-tools"
+"Bug Tracker" = "https://github.com/KhaosResearch/sigpac-tools/issues"
+
+[project.optional-dependencies]
+dev = ["ruff", "pytest"]
+
+[tool.pyright]
+venv = "venv"
+venvPath = "."
