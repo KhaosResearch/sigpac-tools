@@ -22,7 +22,8 @@ classifiers = [
 ]
 dependencies = [
     "pyproj==3.6.1",
-    "requests==2.32.3"
+    "requests==2.32.3",
+    "structlog"
 ]
 
 [project.urls]
