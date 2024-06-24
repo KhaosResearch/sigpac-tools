@@ -134,6 +134,9 @@ venv.bak/
 .spyderproject
 .spyproject
 
+# Visual Studio Code project settings
+.vscode/
+
 # Rope project settings
 .ropeproject
 
@@ -167,3 +170,4 @@ cython_debug/
 # Others
 *inspo*
 wip-file*
+__main__.py

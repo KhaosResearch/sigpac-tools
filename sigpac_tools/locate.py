@@ -59,7 +59,6 @@ def geometry_from_coords(layer: str, lat: float, lon: float, reference: int) -> 
         If the layer is not supported
     """
     if not layer or not lat or not lon or not reference:
-        logger.error("Layer, latitude, longitude or reference not specified")
         raise ValueError("Layer, latitude, longitude or reference not specified")
 
     tile_x, tile_y = lng_lat_to_tile(lon, lat, 15)
@@ -82,9 +81,6 @@ def geometry_from_coords(layer: str, lat: float, lon: float, reference: int) -> 
         return result
 
     else:
-        logger.error(
-            f'Layer "{layer}" not supported. Supported layers: "parcela", "recinto"'
-        )
         raise KeyError(
             f'Layer "{layer}" not supported. Supported layers: "parcela", "recinto"'
         )

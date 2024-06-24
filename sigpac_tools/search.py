@@ -84,9 +84,6 @@ def search(data: dict) -> dict:
             return geojson
 
     else:
-        logger.error(
-            '"Community" has not been specified and it could have not been found from the "province" parameter'
-        )
         raise ValueError(
             '"Community" has not been specified and it could have not been found from the "province" parameter'
         )

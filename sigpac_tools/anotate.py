@@ -68,9 +68,6 @@ def __query(
             print(response.url)
             return response.json()
         case _:
-            logger.error(
-                "Layer not supported. Supported layers: ['parcela', 'recinto']"
-            )
             raise KeyError(
                 "Layer not supported. Supported layers: ['parcela', 'recinto']"
             )
@@ -102,10 +99,8 @@ def get_metadata(layer: str, data: dict):
         If the layer is not supported
     """
     if not layer:
-        logger.error("Layer not specified")
         raise ValueError("Layer not specified")
     elif layer not in ["parcela", "recinto"]:
-        logger.error("Layer not supported. Supported layers: ['parcela', 'recinto']")
         raise KeyError("Layer not supported. Supported layers: ['parcela', 'recinto']")
 
     prov = data.get("province", None)
@@ -117,19 +112,14 @@ def get_metadata(layer: str, data: dict):
     zone = data.get("zone", 0)
 
     if not prov:
-        logger.error("Province not specified")
         raise ValueError("Province not specified")
     if not muni:
-        logger.error("Municipality not specified")
         raise ValueError("Municipality not specified")
     if not polg:
-        logger.error("Polygon not specified")
         raise ValueError("Polygon not specified")
     if not parc:
-        logger.error("Parcel not specified")
         raise ValueError("Parcel not specified")
     if not encl and layer == "recinto":
-        logger.error("Enclosure not specified")
         raise ValueError("Enclosure not specified")
 
     logger.info(f"Searching for the metadata of the location (province {prov}, municipality {muni}, polygon {polg}, parcel {parc}) in the SIGPAC database...")
