@@ -103,21 +103,17 @@ class TestGeometryFromCoords:
 
     def test_missing_parameters(self):
         with pytest.raises(
-            ValueError, match="Layer, latitude, longitude or reference not specified"
+            ValueError, match="Layer, latitude or longitude not specified"
         ):
             geometry_from_coords("", 40.0, -3.0, 123)
         with pytest.raises(
-            ValueError, match="Layer, latitude, longitude or reference not specified"
+            ValueError, match="Layer, latitude or longitude not specified"
         ):
             geometry_from_coords("parcela", None, -3.0, 123)
         with pytest.raises(
-            ValueError, match="Layer, latitude, longitude or reference not specified"
+            ValueError, match="Layer, latitude or longitude not specified"
         ):
             geometry_from_coords("parcela", 40.0, None, 123)
-        with pytest.raises(
-            ValueError, match="Layer, latitude, longitude or reference not specified"
-        ):
-            geometry_from_coords("parcela", 40.0, -3.0, None)
 
 
 if __name__ == "__main__":
