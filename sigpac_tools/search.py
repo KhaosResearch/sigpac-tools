@@ -1,16 +1,10 @@
 import requests
 import structlog
 
-from _globals import BASE_URL, PROVINCES_BY_COMMUNITY
+from sigpac_tools._globals import BASE_URL
+from sigpac_tools.utils import findCommunity
 
 logger = structlog.get_logger()
-
-
-def __findCommunity(province_id: int) -> int:
-    for comunidad, provincias in PROVINCES_BY_COMMUNITY.items():
-        if province_id in provincias:
-            return comunidad
-    return None
 
 
 def search(data: dict) -> dict:
@@ -18,16 +12,20 @@ def search(data: dict) -> dict:
 
     Search for the information of the given location in the SIGPAC database. The search can be done by specifying the community, province, municipality, polygon and parcel.
 
-    Args:
-        data (dict): Dictionary with the data of the location to search. It must be a dictionary with the following keys: [ community, province, municipality, polygon, parcel ]
+    Parameters
+    ----------
+    data : dict
+        Dictionary with the data of the location to search. It must be a dictionary with the following keys: [ community, province, municipality, polygon, parcel ]
 
-    Returns:
-        geojson (dict): Dictionary with information about the location searched and the coordinates of the polygon or parcels
+    Returns
+    -------
+    dict
+        Dictionary with information about the location searched and the coordinates of the polygon or parcels
 
-    Raises:
-        ValueError: If the community is not specified and it is required to search for the location
-
-
+    Raises
+    ------
+    ValueError
+        If the community is not specified and it is required to search for the location
     """
     comm = data.get("community", None)
     prov = data.get("province", None)
@@ -41,7 +39,7 @@ def search(data: dict) -> dict:
                 '"Community" has not been specified, neither has been "province" and it is compulsory to find the community associated'
             )
         else:
-            comm = __findCommunity(prov)
+            comm = findCommunity(prov)
 
     if comm:
         if prov:
