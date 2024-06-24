@@ -21,11 +21,14 @@ mock_geojson_response = {
     ],
 }
 
+
 class TestGeometryFromCoords:
     @patch("sigpac_tools.locate.requests.get")
     @patch("sigpac_tools.locate.lng_lat_to_tile")
     @patch("sigpac_tools.locate.transform_coords")
-    def test_geometry_from_coords_parcela(self, mock_transform_coords, mock_lng_lat_to_tile, mock_get):
+    def test_geometry_from_coords_parcela(
+        self, mock_transform_coords, mock_lng_lat_to_tile, mock_get
+    ):
         mock_lng_lat_to_tile.return_value = (1234, 5678)
         mock_response = Mock()
         mock_response.json.return_value = mock_geojson_response
@@ -39,14 +42,18 @@ class TestGeometryFromCoords:
         result = geometry_from_coords(layer, lat, lon, reference)
 
         mock_lng_lat_to_tile.assert_called_once_with(lon, lat, 15)
-        mock_get.assert_called_once_with(f"{BASE_URL}/vectorsdg/vector/parcela@3857/15.1234.5678.geojson")
+        mock_get.assert_called_once_with(
+            f"{BASE_URL}/vectorsdg/vector/parcela@3857/15.1234.5678.geojson"
+        )
         mock_transform_coords.assert_called_once()
         assert result == mock_geojson_response["features"][0]["geometry"]
 
     @patch("sigpac_tools.locate.requests.get")
     @patch("sigpac_tools.locate.lng_lat_to_tile")
     @patch("sigpac_tools.locate.transform_coords")
-    def test_geometry_from_coords_recinto(self, mock_transform_coords, mock_lng_lat_to_tile, mock_get):
+    def test_geometry_from_coords_recinto(
+        self, mock_transform_coords, mock_lng_lat_to_tile, mock_get
+    ):
         mock_lng_lat_to_tile.return_value = (1234, 5678)
         mock_response = Mock()
         mock_response.json.return_value = mock_geojson_response
@@ -60,7 +67,9 @@ class TestGeometryFromCoords:
         result = geometry_from_coords(layer, lat, lon, reference)
 
         mock_lng_lat_to_tile.assert_called_once_with(lon, lat, 15)
-        mock_get.assert_called_once_with(f"{BASE_URL}/vectorsdg/vector/recinto@3857/15.1234.5678.geojson")
+        mock_get.assert_called_once_with(
+            f"{BASE_URL}/vectorsdg/vector/recinto@3857/15.1234.5678.geojson"
+        )
         mock_transform_coords.assert_called_once()
         assert result == mock_geojson_response["features"][0]["geometry"]
 
@@ -80,22 +89,36 @@ class TestGeometryFromCoords:
         result = geometry_from_coords(layer, lat, lon, reference)
 
         mock_lng_lat_to_tile.assert_called_once_with(lon, lat, 15)
-        mock_get.assert_called_once_with(f"{BASE_URL}/vectorsdg/vector/parcela@3857/15.1234.5678.geojson")
+        mock_get.assert_called_once_with(
+            f"{BASE_URL}/vectorsdg/vector/parcela@3857/15.1234.5678.geojson"
+        )
         assert result is None
 
     def test_invalid_layer(self):
-        with pytest.raises(KeyError, match='Layer "invalid" not supported. Supported layers: "parcela", "recinto"'):
+        with pytest.raises(
+            KeyError,
+            match='Layer "invalid" not supported. Supported layers: "parcela", "recinto"',
+        ):
             geometry_from_coords("invalid", 40.0, -3.0, 123)
 
     def test_missing_parameters(self):
-        with pytest.raises(ValueError, match="Layer, latitude, longitude or reference not specified"):
+        with pytest.raises(
+            ValueError, match="Layer, latitude, longitude or reference not specified"
+        ):
             geometry_from_coords("", 40.0, -3.0, 123)
-        with pytest.raises(ValueError, match="Layer, latitude, longitude or reference not specified"):
+        with pytest.raises(
+            ValueError, match="Layer, latitude, longitude or reference not specified"
+        ):
             geometry_from_coords("parcela", None, -3.0, 123)
-        with pytest.raises(ValueError, match="Layer, latitude, longitude or reference not specified"):
+        with pytest.raises(
+            ValueError, match="Layer, latitude, longitude or reference not specified"
+        ):
             geometry_from_coords("parcela", 40.0, None, 123)
-        with pytest.raises(ValueError, match="Layer, latitude, longitude or reference not specified"):
+        with pytest.raises(
+            ValueError, match="Layer, latitude, longitude or reference not specified"
+        ):
             geometry_from_coords("parcela", 40.0, -3.0, None)
+
 
 if __name__ == "__main__":
     pytest.main()

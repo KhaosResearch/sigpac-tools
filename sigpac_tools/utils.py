@@ -15,7 +15,7 @@ def lng_lat_to_tile(lng: float, lat: float, zoom: float) -> tuple[int, int]:
         Latitude of the location
     zoom : float
         Zoom level to get the tile coordinates
-    
+
     Returns
     -------
     tuple[int, int]
