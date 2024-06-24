@@ -122,7 +122,9 @@ def get_metadata(layer: str, data: dict):
     if not encl and layer == "recinto":
         raise ValueError("Enclosure not specified")
 
-    logger.info(f"Searching for the metadata of the location (province {prov}, municipality {muni}, polygon {polg}, parcel {parc}) in the SIGPAC database...")
+    logger.info(
+        f"Searching for the metadata of the location (province {prov}, municipality {muni}, polygon {polg}, parcel {parc}) in the SIGPAC database..."
+    )
     return __query(
         layer=layer,
         province=prov,

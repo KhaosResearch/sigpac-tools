@@ -58,8 +58,8 @@ def geometry_from_coords(layer: str, lat: float, lon: float, reference: int) -> 
     KeyError
         If the layer is not supported
     """
-    if not layer or not lat or not lon or not reference:
-        raise ValueError("Layer, latitude, longitude or reference not specified")
+    if not layer or not lat or not lon:
+        raise ValueError("Layer, latitude or longitude not specified")
 
     tile_x, tile_y = lng_lat_to_tile(lon, lat, 15)
 
@@ -68,6 +68,12 @@ def geometry_from_coords(layer: str, lat: float, lon: float, reference: int) -> 
     )
 
     geojson_features = response.json()
+
+    if not reference:
+        logger.info(
+            f"No reference specified. Returning all features in the layer {layer} for coordinates ({lat}, {lon})"
+        )
+        return geojson_features
 
     if layer in ["parcela", "recinto"]:
         logger.info(f"Searching for reference {reference} in the layer {layer}...")
