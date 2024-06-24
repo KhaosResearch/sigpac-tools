@@ -33,6 +33,3 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["ruff", "pytest"]
 
-[tool.pyright]
-venv = "venv"
-venvPath = "."
