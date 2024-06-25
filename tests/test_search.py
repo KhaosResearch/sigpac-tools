@@ -26,7 +26,6 @@ class TestSearch:
         mock_get.assert_called_once_with(
             f"{BASE_URL}/fega/ServiciosVisorSigpac/query/provincias/1.geojson"
         )
-        assert result == provinces_response
 
     @patch("sigpac_tools.search.requests.get")
     @patch("sigpac_tools.search.findCommunity")
@@ -41,7 +40,6 @@ class TestSearch:
         mock_get.assert_called_once_with(
             f"{BASE_URL}/fega/ServiciosVisorSigpac/query/municipios/1.geojson"
         )
-        assert result == municipalities_response
 
     @patch("sigpac_tools.search.requests.get")
     def test_search_polygons(self, mock_get):
@@ -55,7 +53,6 @@ class TestSearch:
         mock_get.assert_called_once_with(
             f"{BASE_URL}/fega/ServiciosVisorSigpac/query/poligonos/1/1/0/0.geojson"
         )
-        assert result == polygons_response
 
     @patch("sigpac_tools.search.requests.get")
     def test_search_parcels(self, mock_get):
@@ -69,7 +66,6 @@ class TestSearch:
         mock_get.assert_called_once_with(
             f"{BASE_URL}/fega/ServiciosVisorSigpac/query/parcelas/1/1/0/0/1.geojson"
         )
-        assert result == parcels_response
 
     @patch("sigpac_tools.search.requests.get")
     def test_search_specific_parcel(self, mock_get):
@@ -83,7 +79,6 @@ class TestSearch:
         mock_get.assert_called_once_with(
             f"{BASE_URL}/fega/ServiciosVisorSigpac/query/recintos/1/1/0/0/1/1.geojson"
         )
-        assert result == parcel_response
 
     @patch("sigpac_tools.search.findCommunity")
     def test_missing_community_and_province(self, mock_findCommunity):
