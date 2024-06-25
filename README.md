@@ -1,6 +1,6 @@
 # [SIGPAC-Tools](https://github.com/KhaosResearch/sigpac-tools)
 
-![Python >=3.10](https://img.shields.io/badge/python-%3E=3.10-blue.svg)
+![Python Version from PEP 621 TOML](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2FKhaosResearch%2Fsigpac-tools%2Fmain%2Fpyproject.toml)
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
 ![Status: Active](https://img.shields.io/badge/Status-Active-00aa00.svg)
 ![Code style: Ruff](https://img.shields.io/badge/code%20style-Ruff-aa0000.svg)

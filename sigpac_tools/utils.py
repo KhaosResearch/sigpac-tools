@@ -21,6 +21,9 @@ def lng_lat_to_tile(lng: float, lat: float, zoom: float) -> tuple[int, int]:
     tuple[int, int]
         Returns a tuple with the x and y tile coordinates
     """
+
+    # Code adapted from https://github.com/DenisCarriere/global-mercator
+
     ORIGIN_SHIFT = 2 * math.pi * 6378137 / 2.0
     TILESIZE = 256
 
