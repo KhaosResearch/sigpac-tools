@@ -1,8 +1,8 @@
 # [SIGPAC-Tools](https://github.com/KhaosResearch/sigpac-tools)
 
 ![Python Version from PEP 621 TOML](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2FKhaosResearch%2Fsigpac-tools%2Fmain%2Fpyproject.toml)
-![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
-![Status: Active](https://img.shields.io/badge/Status-Active-00aa00.svg)
+ [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+ ![Status: Active](https://img.shields.io/badge/Status-Active-00aa00.svg)
 ![Code style: Ruff](https://img.shields.io/badge/code%20style-Ruff-aa0000.svg)
 
 
@@ -22,7 +22,7 @@ python -m pip install ./sigpac-tools
 or you can install it directly from the repository:
 
 ```bash
-python -m pip install https://github.com/KhaosResearch/sigpac-tools
+python -m pip install git+https://github.com/KhaosResearch/sigpac-tools
 ```
 
 ## Usage
@@ -100,6 +100,25 @@ geometry = geometry_from_coords(
 )
 ```
 
+### Get information from a specific cadastral registry
+
+Known a cadastral registry, you can get the polygon and metadata from it using the `find_from_cadastral_registry` from the module `find`. 
+This function will return a tuple with a GeoJSON object of the polygon and a dictionary with the metadata of the plot. It will only return the metadata of the "parcela" layer.
+
+Note that urban cadastral registries are not supported yet, due to the lack of information about them in the SIGPAC database.
+
+If an invalid cadastral registry is provided, the function will raise a `ValueError`. If it detects that the cadastral registry is urban, it will raise a `NotImplementedError`.
+
+An example of how to use this function is shown below:
+
+```python
+from sigpac_tools.find import find_from_cadastral_registry
+
+cadastral_registry = "06001A028000380000LH"
+geom, metadata = find_from_cadastral_registry(cadastral_registry)
+```
+
+
 ## Acknowledgements
 
 This inspired by the JavaScript [SIGPAC client](https://github.com/dan96ct/sigpac-client) made by Daniel Cebrián.
@@ -108,4 +127,4 @@ This inspired by the JavaScript [SIGPAC client](https://github.com/dan96ct/sigpa
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-Copyright 2023 Khaos Research, all rights reserved.
+Copyright 2024 Khaos Research, all rights reserved.

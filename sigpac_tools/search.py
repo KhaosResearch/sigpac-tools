@@ -2,7 +2,7 @@ import requests
 import structlog
 
 from sigpac_tools._globals import BASE_URL
-from sigpac_tools.utils import findCommunity
+from sigpac_tools.utils import find_community
 
 logger = structlog.get_logger()
 
@@ -39,7 +39,7 @@ def search(data: dict) -> dict:
                 '"Community" has not been specified, neither has been "province" and it is compulsory to find the community associated'
             )
         else:
-            comm = findCommunity(prov)
+            comm = find_community(prov)
 
     if comm:
         if prov:

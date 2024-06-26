@@ -65,7 +65,6 @@ def __query(
                 "id": f"{province},{municipality},{aggregate},{zone},{polygon},{parcel},{enclosure}",
             }
             response = requests.get(url, params=params)
-            print(response.url)
             return response.json()
         case _:
             raise KeyError(
@@ -125,7 +124,8 @@ def get_metadata(layer: str, data: dict):
     logger.info(
         f"Searching for the metadata of the location (province {prov}, municipality {muni}, polygon {polg}, parcel {parc}) in the SIGPAC database..."
     )
-    return __query(
+
+    res = __query(
         layer=layer,
         province=prov,
         municipality=muni,
@@ -135,3 +135,12 @@ def get_metadata(layer: str, data: dict):
         aggregate=aggr,
         zone=zone,
     )
+    if res is None:
+        raise ValueError(
+            f"The location (province {prov}, municipality {muni}, polygon {polg}, parcel {parc}) does not exist in the SIGPAC database. Please check the data and try again."
+        )
+    else:
+        logger.info(
+            f"Metadata of the location (province {prov}, municipality {muni}, polygon {polg}, parcel {parc}{f', enclosure {encl}' if layer == 'recinto' else ''}) found in the SIGPAC database."
+        )
+    return res

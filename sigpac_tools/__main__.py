@@ -144,6 +144,20 @@ def get_parser():
         metavar="INT",
     )
 
+    # Find cadastral registry command
+
+    find_parser = subparsers.add_parser(
+        "find", help="Find a cadastral registry in the SIGPAC database"
+    )
+    find_parser.add_argument(
+        "--registry",
+        "-r",
+        type=str,
+        help="Cadastral registry to search for",
+        required=True,
+        metavar="STRING"
+    )
+
     return parser
 
 
@@ -169,8 +183,6 @@ def main():
         case "geometry":
             from sigpac_tools.locate import geometry_from_coords
             import json
-
-            print(args)
 
             layer = args.layer
             lat = args.lat
@@ -199,6 +211,19 @@ def main():
             metadata = get_metadata(layer, data)
             logger.info(f"Metadata:\n{json.dumps(metadata, indent=2)}")
             return metadata
+        case "find":
+            from sigpac_tools.find import find_from_cadastral_registry
+            import json
+
+            registry = args.registry
+            geom, metadata = find_from_cadastral_registry(registry)
+            logger.info(
+                f"Geometry for cadastral registry {registry}:\n{json.dumps(geom, indent=2)}"
+            )
+            logger.info(
+                f"Metadata for cadastral registry {registry}:\n{json.dumps(metadata, indent=2)}"
+            )
+            return geom, metadata
         case _:
             raise ValueError("Invalid command")
 
