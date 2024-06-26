@@ -1,7 +1,12 @@
 import pytest
 
-from sigpac_tools.utils import lng_lat_to_tile, transform_coords, findCommunity
-
+from sigpac_tools.utils import (
+    lng_lat_to_tile,
+    transform_coords,
+    find_community,
+    read_cadastral_registry,
+    validate_cadastral_registry
+)
 
 class TestLngLatToTile:
     def test_central_coordinates(self):
@@ -42,16 +47,66 @@ class TestFindCommunity:
     def test_existing_province_id(self):
         province_id = 29
         expected = 1
-        assert findCommunity(province_id) == expected
+        assert find_community(province_id) == expected
 
     def test_non_existing_province_id(self):
         province_id = 60
-        assert findCommunity(province_id) is None
+        assert find_community(province_id) is None
 
     def test_another_existing_province_id(self):
         province_id = 2
         expected = 8
-        assert findCommunity(province_id) == expected
+        assert find_community(province_id) == expected
+
+
+class TestReadCadastralRegistry:
+    def test_read_cadastral_registry_valid(self):
+        registry = "29008A008005720000EQ"
+        expected_result = {
+            "province": 29,
+            "municipality": 8,
+            "section": "A",
+            "polygon": 8,
+            "parcel": 572,
+            "id_inm": 0,
+            "control": "EQ",
+        }
+
+        result = read_cadastral_registry(registry)
+        assert result == expected_result
+
+    def test_read_cadastral_registry_invalid_length(self):
+        with pytest.raises(ValueError, match="The cadastral reference must have a length of 20 characters"):
+            read_cadastral_registry("29008A008005720000EQ000")
+        with pytest.raises(ValueError, match="The cadastral reference must have a length of 20 characters"):
+            read_cadastral_registry("29008A00800572")
+
+    def test_read_cadastral_registry_invalid_province(self):
+        with pytest.raises(ValueError, match="The province of the cadastral reference is not valid"):
+            read_cadastral_registry("99003000100123456789")
+
+
+class TestValidateCadastralRegistry:
+    def test_validate_cadastral_registry_valid(self):
+        registry = "29008A008005720000EQ"
+        validate_cadastral_registry(registry)  # This should pass without exceptions
+
+    def test_validate_cadastral_registry_invalid_length(self):
+        with pytest.raises(ValueError, match="The cadastral reference must have a length of 20 characters"):
+            validate_cadastral_registry("29008A008005720000EQ000")
+        with pytest.raises(ValueError, match="The cadastral reference must have a length of 20 characters"):
+            validate_cadastral_registry("29008A00800572")
+
+    def test_validate_cadastral_registry_urban_not_supported(self):
+        registry = "9872023VH5797S0001WX"
+        with pytest.raises(NotImplementedError):
+            validate_cadastral_registry(registry)
+
+    def test_validate_cadastral_registry_invalid_control(self):
+        registry = "29008A008005720000OL"  # Incorrect control characters
+        with pytest.raises(ValueError):
+            validate_cadastral_registry(registry)
+            
 
 
 if __name__ == "__main__":
