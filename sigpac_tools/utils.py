@@ -158,6 +158,8 @@ def validate_cadastral_registry(reference: str) -> None:
 
     Given a cadastral reference, it validates if the reference is correct or not by comparing the present control characters with the calculated expected ones.
 
+    Based on the code proposed by Emil in the comments of http://el-divagante.blogspot.com/2006/11/algoritmos-y-dgitos-de-control.html
+
     Parameters
     ----------
         reference (str): Cadastral reference to validate
