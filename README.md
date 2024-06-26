@@ -121,7 +121,7 @@ geom, metadata = find_from_cadastral_registry(cadastral_registry)
 
 ## Acknowledgements
 
-This inspired by the JavaScript [SIGPAC client](https://github.com/dan96ct/sigpac-client) made by Daniel Cebrián.
+This project was inspired by the JavaScript [SIGPAC client](https://github.com/dan96ct/sigpac-client) made by Daniel Cebrián.
 
 ## License
 
