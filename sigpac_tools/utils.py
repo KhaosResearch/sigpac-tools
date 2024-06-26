@@ -6,6 +6,7 @@ from sigpac_tools._globals import PROVINCES_BY_COMMUNITY
 
 logger = structlog.get_logger()
 
+
 def lng_lat_to_tile(lng: float, lat: float, zoom: float) -> tuple[int, int]:
     """Transforms the given coordinates from longitude and latitude to tile coordinates for the given zoom level
 
@@ -121,10 +122,10 @@ def read_cadastral_registry(registry: str) -> dict:
     -------
         ValueError: If the length of the cadastral reference is not 20 characters
     """
+    registry = registry.upper().replace(" ", "")
     if len(registry) != 20:
         raise ValueError("The cadastral reference must have a length of 20 characters")
-    registry = registry.upper().replace(" ", "")
-    
+
     reg_prov = registry[:2]
     reg_mun = registry[2:5]
     reg_sec = registry[5]
@@ -133,13 +134,13 @@ def read_cadastral_registry(registry: str) -> dict:
     reg_id = registry[14:18]
     reg_control = registry[18:]
 
+    # Will raise an error if the reference is not valid or if it is urban, in any other case, it will log the result and continue
+    validate_cadastral_registry(registry)
+
     if not find_community(int(reg_prov)):
         raise ValueError(
             "The province of the cadastral reference is not valid. Please check if it is a correct rural reference and try again."
         )
-
-    # Will raise an error if the reference is not valid or if it is urban, in any other case, it will log the result and continue
-    validate_cadastral_registry(registry)
 
     return {
         "province": int(reg_prov),

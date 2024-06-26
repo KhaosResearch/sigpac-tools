@@ -19,7 +19,7 @@ class TestSearch:
         mock_get.return_value = mock_response
 
         data = {"community": 1}
-        result = search(data)
+        search(data)
 
         mock_get.assert_called_once_with(
             f"{BASE_URL}/fega/ServiciosVisorSigpac/query/provincias/1.geojson"
@@ -32,7 +32,7 @@ class TestSearch:
         mock_get.return_value = mock_response
 
         data = {"province": 1}
-        result = search(data)
+        search(data)
 
         mock_get.assert_called_once_with(
             f"{BASE_URL}/fega/ServiciosVisorSigpac/query/municipios/1.geojson"
@@ -45,7 +45,7 @@ class TestSearch:
         mock_get.return_value = mock_response
 
         data = {"province": 1, "municipality": 1}
-        result = search(data)
+        search(data)
 
         mock_get.assert_called_once_with(
             f"{BASE_URL}/fega/ServiciosVisorSigpac/query/poligonos/1/1/0/0.geojson"
@@ -58,7 +58,7 @@ class TestSearch:
         mock_get.return_value = mock_response
 
         data = {"province": 1, "municipality": 1, "polygon": 1}
-        result = search(data)
+        search(data)
 
         mock_get.assert_called_once_with(
             f"{BASE_URL}/fega/ServiciosVisorSigpac/query/parcelas/1/1/0/0/1.geojson"
@@ -71,7 +71,7 @@ class TestSearch:
         mock_get.return_value = mock_response
 
         data = {"province": 1, "municipality": 1, "polygon": 1, "parcel": 1}
-        result = search(data)
+        search(data)
 
         mock_get.assert_called_once_with(
             f"{BASE_URL}/fega/ServiciosVisorSigpac/query/recintos/1/1/0/0/1/1.geojson"

@@ -1,7 +1,5 @@
 import pytest
 from sigpac_tools.locate import geometry_from_coords
-from sigpac_tools._globals import BASE_URL
-
 
 
 class TestGeometryFromCoords:
