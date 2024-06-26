@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "sigpac-tools"
-version = "1.0.0"
+version = "1.1.0"
 authors = [  
   { name="Juan Carlos Ruiz Ruiz", email="juancaruru@uma.es" },
 ]

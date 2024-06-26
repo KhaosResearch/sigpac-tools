@@ -84,6 +84,10 @@ def geometry_from_coords(layer: str, lat: float, lon: float, reference: int) -> 
             logger.warning(
                 f"Reference '{reference}' not found in the layer '{layer}' at coordinates ({lat}, {lon})"
             )
+        else:
+            logger.info(
+                f"Reference '{reference}' found in the layer '{layer}' at coordinates ({lat}, {lon})"
+            )
         return result
 
     else:

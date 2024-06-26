@@ -13,9 +13,7 @@ parcel_response = {"type": "FeatureCollection", "features": [{"id": "parcel"}]}
 
 class TestSearch:
     @patch("sigpac_tools.search.requests.get")
-    @patch("sigpac_tools.search.findCommunity")
-    def test_search_provinces(self, mock_findCommunity, mock_get):
-        mock_findCommunity.return_value = 1
+    def test_search_provinces(self, mock_get):
         mock_response = Mock()
         mock_response.json.return_value = provinces_response
         mock_get.return_value = mock_response
@@ -28,8 +26,7 @@ class TestSearch:
         )
 
     @patch("sigpac_tools.search.requests.get")
-    @patch("sigpac_tools.search.findCommunity")
-    def test_search_municipalities(self, mock_findCommunity, mock_get):
+    def test_search_municipalities(self, mock_get):
         mock_response = Mock()
         mock_response.json.return_value = municipalities_response
         mock_get.return_value = mock_response
@@ -80,8 +77,7 @@ class TestSearch:
             f"{BASE_URL}/fega/ServiciosVisorSigpac/query/recintos/1/1/0/0/1/1.geojson"
         )
 
-    @patch("sigpac_tools.search.findCommunity")
-    def test_missing_community_and_province(self, mock_findCommunity):
+    def test_missing_community_and_province(self):
         data = {"municipality": 1}
         with pytest.raises(
             ValueError,
@@ -89,13 +85,11 @@ class TestSearch:
         ):
             search(data)
 
-    @patch("sigpac_tools.search.findCommunity")
-    def test_missing_community_not_found(self, mock_findCommunity):
-        mock_findCommunity.return_value = None
-        data = {"province": 1}
+    def test_missing_community_not_found(self):
+        data = {"parcel": 1}
         with pytest.raises(
             ValueError,
-            match='"Community" has not been specified and it could have not been found from the "province" parameter',
+            match='"Community" has not been specified, neither has been "province" and it is compulsory to find the community associated',
         ):
             search(data)
 
