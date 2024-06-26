@@ -155,7 +155,7 @@ def get_parser():
         type=str,
         help="Cadastral registry to search for",
         required=True,
-        metavar="STRING"
+        metavar="STRING",
     )
 
     return parser

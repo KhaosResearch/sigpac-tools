@@ -9,7 +9,7 @@ from sigpac_tools.utils import read_cadastral_registry
 logger = structlog.get_logger()
 
 
-def find_from_cadastral_registry(cadastral_reg : str):
+def find_from_cadastral_registry(cadastral_reg: str):
     """
     Find the geometry and metadata of a cadastral reference in the SIGPAC database. The reference must be rural. Urban references are not supported.
 
@@ -33,7 +33,7 @@ def find_from_cadastral_registry(cadastral_reg : str):
         Geojson geometry of the found reference
     dict
         Metadata of the found reference
-    
+
     Raises
     -------
     ValueError
@@ -51,12 +51,12 @@ def find_from_cadastral_registry(cadastral_reg : str):
 
     # Search for coordinates
 
-    search_data = search(
-        reg
-    )
+    search_data = search(reg)
     if search_data["features"] == []:
-        raise ValueError(f"The cadastral reference {cadastral_reg} does not exist in the SIGPAC database. Please check the if the reference is correct and try again. Urban references are not supported.") 
-    
+        raise ValueError(
+            f"The cadastral reference {cadastral_reg} does not exist in the SIGPAC database. Please check the if the reference is correct and try again. Urban references are not supported."
+        )
+
     coords_x = []
     coords_y = []
     for feat in search_data["features"]:
@@ -67,17 +67,11 @@ def find_from_cadastral_registry(cadastral_reg : str):
     # Get geometry
 
     geometry = geometry_from_coords(
-        layer="parcela",
-        lat=coords[1],
-        lon=coords[0],
-        reference=reg["parcel"]
+        layer="parcela", lat=coords[1], lon=coords[0], reference=reg["parcel"]
     )
 
     # Get metadata
 
-    metadata = get_metadata(
-        layer="parcela",
-        data=reg
-    )
+    metadata = get_metadata(layer="parcela", data=reg)
 
     return geometry, metadata
