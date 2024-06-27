@@ -56,7 +56,7 @@ def lng_lat_to_tile(lng: float, lat: float, zoom: float) -> tuple[int, int]:
     return tx, ty
 
 
-def transform_coords(feature: dict) -> None:
+def transform_coords(feature: dict, projection_id: str = "epsg:4326") -> None:
     """Transforms the coordinates of the given feature from EPSG:3857 to EPSG:4326
 
     Parameters
@@ -71,7 +71,7 @@ def transform_coords(feature: dict) -> None:
     for coords in feature["geometry"]["coordinates"]:
         for coord in coords:
             firstProjection = 'PROJCS["WGS 84 / Pseudo-Mercator",GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]],PROJECTION["Mercator_1SP"],PARAMETER["central_meridian",0],PARAMETER["scale_factor",1],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["X",EAST],AXIS["Y",NORTH],EXTENSION["PROJ4","+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs"],AUTHORITY["EPSG","3857"]]'
-            secondProjection = pyproj.Proj("epsg:4326")
+            secondProjection = pyproj.Proj(projection_id)
             optimus_prime = pyproj.Transformer.from_proj(
                 firstProjection, secondProjection
             )
