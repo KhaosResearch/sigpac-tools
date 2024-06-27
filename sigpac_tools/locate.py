@@ -27,8 +27,11 @@ def __locate_in_feature_collection(
     """
     for feature in featureCollection["features"]:
         if feature["properties"][layer] == reference:
-            transform_coords(feature)
-            return feature["geometry"]
+            projection = "epsg:4326"
+            transform_coords(feature, "epsg:4326")
+            geom = feature["geometry"]
+            geom["CRS"] = projection
+            return geom
     return None
 
 
