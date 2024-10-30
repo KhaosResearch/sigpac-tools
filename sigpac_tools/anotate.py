@@ -47,29 +47,22 @@ def __query(
     KeyError
         If the layer is not supported
     """
+    id = ""
     match layer.lower():
         case "parcela":
             logger.info("Searching for the parcel specified")
-            url = f"{BASE_URL}/fega/ServiciosVisorSigpac/LayerInfo"
-            params = {
-                "layer": layer,
-                "id": f"{province},{municipality},{aggregate},{zone},{polygon},{parcel}",
-            }
-            response = requests.get(url, params=params)
-            return response.json()
+            id = f"{province},{municipality},{aggregate},{zone},{polygon},{parcel}"
         case "recinto":
             logger.info("Searching for the enclosure specified")
-            url = f"{BASE_URL}/fega/ServiciosVisorSigpac/LayerInfo"
-            params = {
-                "layer": layer,
-                "id": f"{province},{municipality},{aggregate},{zone},{polygon},{parcel},{enclosure}",
-            }
-            response = requests.get(url, params=params)
-            return response.json()
+            id = f"{province},{municipality},{aggregate},{zone},{polygon},{parcel},{enclosure}"
         case _:
             raise KeyError(
                 "Layer not supported. Supported layers: ['parcela', 'recinto']"
             )
+    
+    url = f"{BASE_URL}/fega/serviciosvisorsigpac/layerinfo/{layer}/{id}"
+    response = requests.get(url)
+    return response.json()
 
 
 def get_metadata(layer: str, data: dict):
