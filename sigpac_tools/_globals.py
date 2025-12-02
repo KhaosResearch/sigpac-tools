@@ -1,6 +1,6 @@
 # URL from SIGPAC service
-BASE_URL = "https://sigpac.mapama.gob.es"
-
+BASE_URL = "https://sigpac-hubcloud.es"
+QUERY_URL = "servicioconsultassigpac/query"
 
 # Provinces divided into communities
 # https://www.ine.es/daco/daco42/codmun/cod_ccaa_provincia.htm
