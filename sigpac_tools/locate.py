@@ -7,7 +7,7 @@ from sigpac_tools.anotate import extract_geometry, extract_metadata, get_geometr
 logger = structlog.get_logger()
 
 
-def geometry_and_metadata_from_coords(layer: str, lat: float, lon: float, crs: str = "4258") -> dict:
+def get_geometry_and_metadata_from_coords(layer: str, lat: float, lon: float, crs: str = "4258") -> dict:
     """Gets the geometry of the given coordinates and reference in the given layer
 
     Parameters
@@ -71,7 +71,7 @@ if __name__ == '__main__':
     lng = -2.295612
     reference = None
 
-    geometry, metadata = geometry_and_metadata_from_coords(
+    geometry, metadata = get_geometry_and_metadata_from_coords(
         layer,
         lat,
         lng
