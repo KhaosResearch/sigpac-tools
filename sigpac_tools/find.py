@@ -1,9 +1,9 @@
 import structlog
 
-from sigpac_tools.search import search
-from sigpac_tools.anotate import get_metadata
-from sigpac_tools.locate import geometry_from_coords
-from sigpac_tools.utils import read_cadastral_registry
+from .search import search
+from .anotate import get_geometry_and_metadata
+from .locate import geometry_from_coords
+from .utils import read_cadastral_registry
 
 
 logger = structlog.get_logger()
@@ -48,30 +48,19 @@ def find_from_cadastral_registry(cadastral_reg: str):
         If the reference is urban
     """
     reg = read_cadastral_registry(cadastral_reg)
-
+    
     # Search for coordinates
 
-    search_data = search(reg)
-    if search_data["features"] == []:
-        raise ValueError(
-            f"The cadastral reference {cadastral_reg} does not exist in the SIGPAC database. Please check the if the reference is correct and try again. Urban references are not supported."
-        )
-
-    coords_x = []
-    coords_y = []
-    for feat in search_data["features"]:
-        coords_x.append((feat["properties"]["x1"] + feat["properties"]["x2"]) / 2)
-        coords_y.append((feat["properties"]["y1"] + feat["properties"]["y2"]) / 2)
-    coords = [sum(coords_x) / len(coords_x), sum(coords_y) / len(coords_y)]
-
-    # Get geometry
-
-    geometry = geometry_from_coords(
-        layer="parcela", lat=coords[1], lon=coords[0], reference=reg["parcel"]
-    )
-
-    # Get metadata
-
-    metadata = get_metadata(layer="parcela", data=reg)
+    geometry, metadata = get_geometry_and_metadata(layer="parcela", data=reg)
 
     return geometry, metadata
+
+if __name__ == '__main__':
+    cadastral_reference = '26002A001000010000EQ'
+
+    geometry, metadata = find_from_cadastral_registry(cadastral_reference)
+
+    logger.debug(f"METADATA:\n\n{str(metadata)[:500]}\n...\n\n")
+    logger.debug(f"GEOMETRY:\n\n{str(geometry)[:500]}\n...\n\n")
+
+    
