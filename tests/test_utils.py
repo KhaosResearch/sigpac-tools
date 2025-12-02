@@ -5,6 +5,8 @@ from sigpac_tools.utils import (
     transform_coords,
     find_community,
     read_cadastral_registry,
+    build_cadastral_reference,
+    calculate_control_characters,
     validate_cadastral_registry,
 )
 
@@ -92,6 +94,24 @@ class TestReadCadastralRegistry:
         with pytest.raises(NotImplementedError):
             read_cadastral_registry("99003000100123456789")
 
+class TestBuildCadastralReference:
+    def test_build_cadastral_reference_valid(self):
+        prov = "26"
+        muni = "002"
+        poly = "001"
+        parc = "00001"
+        expected_result = "26002A001000010000EQ"
+
+        result = build_cadastral_reference(prov, muni, poly, parc)
+        assert result == expected_result
+
+class TestCalculateControlCharacters:
+    def test_calculate_control_characters_valid(self):
+        partial_ref = "26002A001000010000"
+        expected_result = "EQ"
+
+        result = calculate_control_characters(partial_ref)
+        assert result == expected_result
 
 class TestValidateCadastralRegistry:
     def test_validate_cadastral_registry_valid(self):

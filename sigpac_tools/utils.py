@@ -1,4 +1,6 @@
 import structlog
+import math
+import pyproj
 
 from sigpac_tools._globals import PROVINCES_BY_COMMUNITY
 
