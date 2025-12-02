@@ -1,6 +1,9 @@
-from collections import defaultdict
 import requests
 import structlog
+
+from collections import defaultdict
+from shapely.geometry import shape, mapping
+from shapely.ops import unary_union
 
 from sigpac_tools._globals import BASE_URL, QUERY_URL
 
@@ -67,11 +70,10 @@ def __query(
     response.raise_for_status()
     return response.json()
 
-
-def get_metadata(layer: str, data: dict):
+def get_metadata_and_geometry(layer: str, data: dict):
     """Get the metadata of the given location from the SIGPAC database
 
-    It searches for the metadata of the given location in the SIGPAC database. The search can be done by specifying the layer, province, municipality, polygon and parcel.
+    The search can be done by specifying the layer, province, municipality, polygon and parcel.
     The level of detail of the search can be increased by specifying the layer to search between "parcela" and "recinto".
 
     Parameters
@@ -83,8 +85,8 @@ def get_metadata(layer: str, data: dict):
 
     Returns
     -------
-    dict
-        Dictionary with the metadata of the SIGPAC database
+    dict, dict
+        Dictionaries with the metadata and geometry of the SIGPAC database
 
     Raises
     ------
@@ -122,7 +124,7 @@ def get_metadata(layer: str, data: dict):
         f"Searching for the metadata of the location (province {prov}, municipality {muni}, polygon {polg}, parcel {parc}) in the SIGPAC database..."
     )
     
-    province_code = int(str(comm+prov))
+    province_code = int(str(comm)+str(prov))
 
     res = __query(
         layer=layer,
@@ -136,31 +138,36 @@ def get_metadata(layer: str, data: dict):
     )
     if res is None:
         raise ValueError(
-            f"The location (province {prov}, municipality {muni}, polygon {polg}, parcel {parc}) does not exist in the SIGPAC database. Please check the data and try again."
+            f"The location (community {comm} province {prov}, municipality {muni}, polygon {polg}, parcel {parc}) does not exist in the SIGPAC database. Please check the data and try again."
         )
     else:
         logger.info(
-            f"Metadata of the location (province {prov}, municipality {muni}, polygon {polg}, parcel {parc}{f', enclosure {encl}' if layer == 'recinto' else ''}) found in the SIGPAC database."
+            f"Metadata of the location (community {comm} province {prov}, municipality {muni}, polygon {polg}, parcel {parc}{f', enclosure {encl}' if layer == 'recinto' else ''}) found in the SIGPAC database."
         )
     
-    metadata = extract_metadata(res)
+    metadata = extract_metadata(res, layer)
+    geometry = extract_geometry(res)
     
-    return metadata
+    return metadata, geometry
 
-def extract_metadata(response_json: dict) -> dict:
-    """Extract parcel metadata from SIGPAC data response.
+def extract_metadata(response_json: dict, layer: str) -> dict:
+    """Extract parcel metadata from SIGPAC data response
 
-    Parameters:
+    Parameters
     ----------
-        response_json (dict): All parcel's enclousure info JSON data
+    response_json : dict 
+        All parcel's enclousure info JSON data
+    layer : str
+        Layer to search from ("parcela", "recinto")
 
-    Returns:
+    Returns
     -------
-        full_parcel_metadata (dict): JSON metadata for the overall parcel
+    full_parcel_metadata : dict
+        JSON metadata for the overall parcel
 
     Raises
     -------
-        ValueError: If no data was found
+    ValueError: If no data was found
 
     """
 
@@ -169,7 +176,9 @@ def extract_metadata(response_json: dict) -> dict:
     land_use = []
     total_surface = 0.0
 
-    for feature in response_json.get("features", []):
+    features = response_json.get("features", [])
+
+    for feature in features:
         properties = feature.get("properties", {})
 
         # Extract and enrich info
@@ -206,9 +215,13 @@ def extract_metadata(response_json: dict) -> dict:
     # Parcel info
     parcel_info_cols = ["provincia", "municipio",
                         "agregado", "poligono", "parcela"]
+    if len(features) < 2:
+        parcel_info_cols.append("zona")
+        parcel_info_cols.append("recinto")
+
     parcel_info_entry = {col: properties.get(col) for col in parcel_info_cols}
     parcel_info_entry.update({
-        "referencia_cat": "",
+        # "referencia_cat": "",
         "dn_surface": total_surface
     })
 
@@ -228,20 +241,60 @@ def extract_metadata(response_json: dict) -> dict:
 
     # Build final parcel metadata
     full_parcel_metadata = {
-        "arboles": None,
-        "convergencia": None,
-        "id": None,
-        "isRecin": None,
+        # "arboles": None,
+        # "convergencia": None,
+        # "id": None,
+        "isRecin": layer == "recinto",
         "parcelaInfo": parcel_info_entry,
         "query": query,
         "usos": land_use_grouped,
-        "vigencia": None,
-        "vuelo": None
+        # "vigencia": None,
+        # "vuelo": None
     }
     logger.info("Extracted metadata successfully.")
 
     return full_parcel_metadata
 
+def extract_geometry(full_json: dict) -> dict:
+    """ Extract parcel geometry info from all of the individual enclosures geometry data.
+
+    Parameters
+    ----------
+    full_json (dict):
+        All parcel's enclousure info JSON data
+
+    Returns
+    -------
+    full_parcel_geometry (dict):
+        GeoJSON for overall parcel geometry
+
+    Raises
+    -------
+        ValueError: If no geometries were found
+    """
+    full_parcel_geometry = {}
+
+    # Extract all geometries from features
+    all_geometries = [shape(feature["geometry"])
+                      for feature in full_json["features"]]
+
+    if not all_geometries:
+        raise ValueError("No geometries found in the provided JSON data.")
+
+    logger.info("Found full metadata and geometry info for parcel.")
+
+    # Merge all geometries into one (union of polygons)
+    merged_geometry = unary_union(all_geometries)
+
+    # Convert back to GeoJSON format
+    full_parcel_geometry = mapping(merged_geometry)
+
+    # Add CRS
+    crs = f'{str(full_json["crs"]["type"]).lower()}:{full_json["crs"]["properties"]["code"]}'
+    full_parcel_geometry['CRS'] = crs
+    logger.info("Extracted geometry successfully.")
+
+    return full_parcel_geometry
 
 if __name__ == '__main__':
 
@@ -252,13 +305,14 @@ if __name__ == '__main__':
         "municipality": 2,
         "polygon": 1,
         "parcel": 1,
-        # "enclosure": 2,
-        # "aggregate": 0,
-        # "zone": 0
+        "enclosure": 2,
+        "aggregate": 0,
+        "zone": 0
     }
 
-    metadata = get_metadata(
+    metadata, geometry = get_metadata_and_geometry(
         layer,
         data
     )
     logger.debug(f"METADATA:\n\n{metadata}\n\n")
+    logger.debug(f"GEOMETRY:\n\n{geometry}\n\n")
