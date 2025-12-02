@@ -1,9 +1,7 @@
 import structlog
 
-from .search import search
-from .anotate import get_geometry_and_metadata
-from .locate import geometry_from_coords
-from .utils import read_cadastral_registry
+from sigpac_tools.anotate import get_geometry_and_metadata
+from sigpac_tools.utils import read_cadastral_registry
 
 
 logger = structlog.get_logger()

@@ -1,41 +1,13 @@
 import requests
 import structlog
 
-from sigpac_tools._globals import BASE_URL
-from sigpac_tools.utils import lng_lat_to_tile, transform_coords
+from sigpac_tools._globals import BASE_URL, QUERY_URL
+from sigpac_tools.anotate import extract_geometry, extract_metadata, get_geometry_and_metadata
 
 logger = structlog.get_logger()
 
 
-def __locate_in_feature_collection(
-    reference: int, layer: str, featureCollection: dict
-) -> dict | None:
-    """Locates the given reference in the feature collection given the layer to search from
-
-    Parameters
-    ----------
-    reference : int
-        Reference to search
-    layer : str
-        Layer to search from ("parcela", "recinto")
-    featureCollection : dict
-        Geojson feature collection to search from
-
-    Returns:
-    dict | None
-        Geojson geometry of the found reference. If not found, returns `None`
-    """
-    for feature in featureCollection["features"]:
-        if feature["properties"][layer] == reference:
-            projection = "epsg:4326"
-            transform_coords(feature, "epsg:4326")
-            geom = feature["geometry"]
-            geom["CRS"] = projection
-            return geom
-    return None
-
-
-def geometry_from_coords(layer: str, lat: float, lon: float, reference: int) -> dict:
+def geometry_and_metadata_from_coords(layer: str, lat: float, lon: float, crs: str = "4258") -> dict:
     """Gets the geometry of the given coordinates and reference in the given layer
 
     Parameters
@@ -46,13 +18,13 @@ def geometry_from_coords(layer: str, lat: float, lon: float, reference: int) -> 
         Latitude of the location
     lon : float
         Longitude of the location
-    reference : int
-        Reference to search for
+    crs : str
+        Coordinates reference system
 
     Returns
     -------
-    dict
-        Geojson geometry of the found reference
+    dict, dict
+        Geojson geometry and metadata of the found reference
 
     Raises
     ------
@@ -64,36 +36,45 @@ def geometry_from_coords(layer: str, lat: float, lon: float, reference: int) -> 
     if not layer or not lat or not lon:
         raise ValueError("Layer, latitude or longitude not specified")
 
-    tile_x, tile_y = lng_lat_to_tile(lon, lat, 15)
+    url = f"{BASE_URL}/{QUERY_URL}/recinfobypoint/{crs}/{lon}/{lat}.geojson"
+    logger.debug(f"SIGPAC endpoint: {url}")
+    response = requests.get(url)
+    features_and_metadata = response.json()
 
-    response = requests.get(
-        f"{BASE_URL}/vectorsdg/vector/{layer}@3857/15.{tile_x}.{tile_y}.geojson"
-    )
+    if layer == "parcela":
+        logger.info(f"Searching for all enclosures' data in the layer {layer}...")
+        # Make additional SIGPAC API call to get all of the parcel's data
+        reference_data = features_and_metadata.get("features")[0].get("properties")
+        data = {
+            "province": int(reference_data.get("provincia")),
+            "municipality": int(reference_data.get("municipio")),
+            "polygon": int(reference_data.get("poligono")),
+            "parcel": int(reference_data.get("parcela")),
+        }
+        geometry, metadata = get_geometry_and_metadata(layer, data)
 
-    geojson_features = response.json()
-
-    if not reference:
-        logger.info(
-            f"No reference specified. Returning all features in the layer {layer} for coordinates ({lat}, {lon})"
-        )
-        return geojson_features
-
-    if layer in ["parcela", "recinto"]:
-        logger.info(f"Searching for reference {reference} in the layer {layer}...")
-        result = __locate_in_feature_collection(
-            reference=reference, layer=layer, featureCollection=geojson_features
-        )
-        if not result:
-            logger.warning(
-                f"Reference '{reference}' not found in the layer '{layer}' at coordinates ({lat}, {lon})"
-            )
-        else:
-            logger.info(
-                f"Reference '{reference}' found in the layer '{layer}' at coordinates ({lat}, {lon})"
-            )
-        return result
-
+    elif layer == "recinto":
+        logger.info(f"Searching for enclosure's data in the layer {layer}...")
+        geometry = extract_geometry(features_and_metadata,)
+        metadata = extract_metadata(features_and_metadata, layer)
     else:
         raise KeyError(
             f'Layer "{layer}" not supported. Supported layers: "parcela", "recinto"'
         )
+
+    return geometry, metadata
+
+if __name__ == '__main__':
+
+    layer = "parcela"
+    lat = 42.465489 
+    lng = -2.295612
+    reference = None
+
+    geometry, metadata = geometry_and_metadata_from_coords(
+        layer,
+        lat,
+        lng
+    )
+    logger.debug(f"METADATA:\n\n{str(metadata)[:500]}\n...\n\n")
+    logger.debug(f"GEOMETRY:\n\n{str(geometry)[:500]}\n...\n\n")
