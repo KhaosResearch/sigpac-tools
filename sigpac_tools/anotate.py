@@ -63,12 +63,13 @@ def __query(
             raise KeyError(
                 "Layer not supported. Supported layers: ['parcela', 'recinto']"
             )
-    
+
     url = f"{BASE_URL}/{QUERY_URL}/{id}.geojson"
     logger.debug(f"SIGPAC endpoint: {url}")
     response = requests.get(url)
     response.raise_for_status()
     return response.json()
+
 
 def get_geometry_and_metadata_cadastral(layer: str, data: dict):
     """Get the metadata of the given location from the SIGPAC database
@@ -98,7 +99,8 @@ def get_geometry_and_metadata_cadastral(layer: str, data: dict):
     if not layer:
         raise ValueError("Layer not specified")
     elif layer not in ["parcela", "recinto"]:
-        raise KeyError("Layer not supported. Supported layers: ['parcela', 'recinto']")
+        raise KeyError(
+            "Layer not supported. Supported layers: ['parcela', 'recinto']")
 
     prov = data.get("province", None)
     muni = data.get("municipality", None)
@@ -122,7 +124,7 @@ def get_geometry_and_metadata_cadastral(layer: str, data: dict):
     logger.info(
         f"Searching for the data of the location (province {prov}, municipality {muni}, polygon {polg}, parcel {parc}) in the SIGPAC database..."
     )
-    
+
     res = __query(
         layer=layer,
         province=prov,
@@ -141,11 +143,12 @@ def get_geometry_and_metadata_cadastral(layer: str, data: dict):
         logger.info(
             f"Data of the location (province {prov}, municipality {muni}, polygon {polg}, parcel {parc}{f', enclosure {encl}' if layer == 'recinto' else ''}) found in the SIGPAC database."
         )
-    
+
     geometry = extract_geometry(res)
     metadata = extract_metadata(res, layer)
-    
+
     return geometry, metadata
+
 
 def extract_geometry(full_json: dict) -> dict:
     """ Extract parcel geometry info from all of the individual enclosures geometry data.
@@ -185,6 +188,7 @@ def extract_geometry(full_json: dict) -> dict:
     logger.info("Extracted geometry successfully.")
 
     return full_parcel_geometry
+
 
 def extract_metadata(response_json: dict, layer: str) -> dict:
     """Extract parcel metadata from SIGPAC data response
@@ -290,6 +294,7 @@ def extract_metadata(response_json: dict, layer: str) -> dict:
     logger.info("Extracted metadata successfully.")
 
     return full_parcel_metadata
+
 
 if __name__ == '__main__':
 

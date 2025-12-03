@@ -42,9 +42,11 @@ def get_geometry_and_metadata_coords(layer: str, lat: float, lon: float, crs: st
     features_and_metadata = response.json()
 
     if layer == "parcela":
-        logger.info(f"Searching for all enclosures' data in the layer {layer}...")
+        logger.info(
+            f"Searching for all enclosures' data in the layer {layer}...")
         # Make additional SIGPAC API call to get all of the parcel's data
-        reference_data = features_and_metadata.get("features")[0].get("properties")
+        reference_data = features_and_metadata.get(
+            "features")[0].get("properties")
         data = {
             "province": int(reference_data.get("provincia")),
             "municipality": int(reference_data.get("municipio")),
@@ -64,11 +66,12 @@ def get_geometry_and_metadata_coords(layer: str, lat: float, lon: float, crs: st
 
     return geometry, metadata
 
+
 if __name__ == '__main__':
 
     layer = "parcela"
     lat = 37.265840
-    lng = -4.593406 
+    lng = -4.593406
     reference = None
 
     geometry, metadata = get_geometry_and_metadata_coords(

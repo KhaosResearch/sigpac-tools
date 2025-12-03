@@ -53,7 +53,8 @@ def search(data: dict) -> dict:
                         geojson = response.json()
                         return geojson
                     else:
-                        logger.info(f"Searching for the parcels of the polygon {polg}")
+                        logger.info(
+                            f"Searching for the parcels of the polygon {polg}")
                         response = requests.get(
                             f"{BASE_URL}/fega/serviciosvisorsigpac/query/parcelas/{prov}/{muni}/0/0/{polg}"
                         )
@@ -69,7 +70,8 @@ def search(data: dict) -> dict:
                     geojson = response.json()
                     return geojson
             else:
-                logger.info(f"Searching for the municipalities of the province {prov}")
+                logger.info(
+                    f"Searching for the municipalities of the province {prov}")
                 response = requests.get(
                     f"{BASE_URL}/fega/serviciosvisorsigpac/query/municipios/{prov}"
                 )

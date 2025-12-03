@@ -46,12 +46,14 @@ def find_from_cadastral_registry(cadastral_reg: str):
         If the reference is urban
     """
     reg = read_cadastral_registry(cadastral_reg)
-    
+
     # Search for coordinates
 
-    geometry, metadata = get_geometry_and_metadata_cadastral(layer="parcela", data=reg)
+    geometry, metadata = get_geometry_and_metadata_cadastral(
+        layer="parcela", data=reg)
 
     return geometry, metadata
+
 
 if __name__ == '__main__':
     cadastral_reference = '14048A001001990000RM'
@@ -60,5 +62,3 @@ if __name__ == '__main__':
 
     logger.debug(f"METADATA:\n\n{str(metadata)[:500]}\n...\n\n")
     logger.debug(f"GEOMETRY:\n\n{str(geometry)[:500]}\n...\n\n")
-
-    

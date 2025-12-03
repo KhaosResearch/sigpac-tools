@@ -124,7 +124,8 @@ def read_cadastral_registry(registry: str) -> dict:
     """
     registry = registry.upper().replace(" ", "")
     if len(registry) != 20:
-        raise ValueError("The cadastral reference must have a length of 20 characters")
+        raise ValueError(
+            "The cadastral reference must have a length of 20 characters")
 
     reg_prov = registry[:2]
     reg_mun = registry[2:5]
@@ -276,7 +277,8 @@ def validate_cadastral_registry(reference: str) -> None:
     res = "MQWERTYUIOPASDFGHJKLBZX"
 
     if len(reference) != 20:
-        raise ValueError("The cadastral reference must have a length of 20 characters")
+        raise ValueError(
+            "The cadastral reference must have a length of 20 characters")
     else:
         separated_ref = list(reference)
 

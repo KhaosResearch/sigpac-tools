@@ -7,7 +7,8 @@ logger = structlog.get_logger()
 def get_parser():
     parser = argparse.ArgumentParser(description="SIGPAC Tools")
 
-    subparsers = parser.add_subparsers(dest="command", help="Available commands")
+    subparsers = parser.add_subparsers(
+        dest="command", help="Available commands")
     subparsers.required = True
 
     # Search command
