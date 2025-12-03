@@ -51,61 +51,59 @@ It is important to note that the `search` function will return a GeoJSON object 
 
 ### Get the information of a plot
 
-You can get the information of a plot using the `get_metadata` function in the `anotate` module. This function will return a dictionary with the information of the plot, given the same data as the `search` function.
+You can get the information of a plot using the `get_geometry_and_metadata_cadastral` function in the `anotate` module. This function will return a tuple of dictionaries with the information of the plot, given the same data as the `search` function.
 
 ```python
-from sigpac_tools.anotate import get_metadata
+from sigpac_tools.anotate import get_geometry_and_metadata_cadastral
 
 layer = "parcela"
+layer = "parcela"
 data = {
-    "community": 1,
-    "province": 1,
-    "municipality": 8,
-    "polygon": 8,
-    "parcel": 572,
+    "province": 14,
+    "municipality": 48,
+    "polygon": 1,
+    "parcel": 199,
     # "enclosure": 1,
     # "aggregate": 0,
     # "zone": 0
 }
 
-metadata = get_metadata(
+metadata, geometry = get_geometry_and_metadata_cadastral(
     layer,
     data
 )
 ```
 
-> `enclosure` is only necesary if the layer is "recinto". `aggregate` and `zone` are optional and depend on the location of the parcel or enclosure searched for.
+> `enclosure` is only necesary if the `layer` is "recinto". `aggregate` and `zone` are optional and depend on the location of the parcel or enclosure searched for.
 
 ### Get the geometry of a plot
 
-Given the coordinates of the plot, that may be gathered from the function `search`, you can get the geometry of the plot using the `geometry_from_coords` function in the `locate` module. This function will return a GeoJSON object with the geometry of the plot. 
+You can also get the geometry and metadata of the plot using the `get_geometry_and_metadata_coords` function in the `locate` module. This function will return a both the GeoJSON object with the geometry of the plot and the metadata dictionary. 
 
-The user may specify a reference parcel or enclosure to get the geometry of and so on the function will return the geometry of that specific parcel or enclosure if it exists. If the reference parcel or enclosure does not exist, the function will return `None`.
-
-If the reference parcel or enclosure is not provided, the function will return a Feature Collection with all the parcels that match the search criteria.
+The user can specify whether to retrieve the information on a single enclosure inside the plot or the whole parcel associated to the coordinates using the `layer` argument.
 
 ```python
-from sigpac_tools.locate import geometry_from_coords
+from sigpac_tools.locate import get_geometry_and_metadata_coords
 
 layer = "parcela"
-lat = 37.384 
-lng = -4.98
-reference = None
+lat = 37.265840
+lng = -4.593406 
 
-geometry = geometry_from_coords(
+geometry, metadata = get_geometry_and_metadata_coords(
     layer,
     lat,
     lng,
-    reference
+    # crs="4258"
 )
 ```
+> Default value for `crs` is already set, but users may change it if the they need it.
 
 ### Get information from a specific cadastral registry
 
 Known a cadastral registry, you can get the polygon and metadata from it using the `find_from_cadastral_registry` from the module `find`. 
 This function will return a tuple with a GeoJSON object of the polygon and a dictionary with the metadata of the plot. It will only return the metadata of the "parcela" layer.
 
-Note that urban cadastral registries are not supported yet, due to the lack of information about them in the SIGPAC database.
+Note that **urban cadastral registries are not supported yet**, due to the lack of information about them in the SIGPAC database.
 
 If an invalid cadastral registry is provided, the function will raise a `ValueError`. If it detects that the cadastral registry is urban, it will raise a `NotImplementedError`.
 
@@ -114,8 +112,8 @@ An example of how to use this function is shown below:
 ```python
 from sigpac_tools.find import find_from_cadastral_registry
 
-cadastral_registry = "06001A028000380000LH"
-geom, metadata = find_from_cadastral_registry(cadastral_registry)
+cadastral_registry = "14048A001001990000RM"
+geometry, metadata = find_from_cadastral_registry(cadastral_registry)
 ```
 
 
