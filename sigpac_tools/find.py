@@ -1,6 +1,6 @@
 import structlog
 
-from sigpac_tools.anotate import get_geometry_and_metadata
+from sigpac_tools.anotate import get_geometry_and_metadata_cadastral
 from sigpac_tools.utils import read_cadastral_registry
 
 
@@ -49,12 +49,12 @@ def find_from_cadastral_registry(cadastral_reg: str):
     
     # Search for coordinates
 
-    geometry, metadata = get_geometry_and_metadata(layer="parcela", data=reg)
+    geometry, metadata = get_geometry_and_metadata_cadastral(layer="parcela", data=reg)
 
     return geometry, metadata
 
 if __name__ == '__main__':
-    cadastral_reference = '26002A001000010000EQ'
+    cadastral_reference = '14048A001001990000RM'
 
     geometry, metadata = find_from_cadastral_registry(cadastral_reference)
 

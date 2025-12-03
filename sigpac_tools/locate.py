@@ -2,12 +2,12 @@ import requests
 import structlog
 
 from sigpac_tools._globals import BASE_URL, QUERY_URL
-from sigpac_tools.anotate import extract_geometry, extract_metadata, get_geometry_and_metadata
+from sigpac_tools.anotate import extract_geometry, extract_metadata, get_geometry_and_metadata_cadastral
 
 logger = structlog.get_logger()
 
 
-def get_geometry_and_metadata_from_coords(layer: str, lat: float, lon: float, crs: str = "4258") -> dict:
+def get_geometry_and_metadata_coords(layer: str, lat: float, lon: float, crs: str = "4258") -> dict:
     """Gets the geometry of the given coordinates and reference in the given layer
 
     Parameters
@@ -51,7 +51,7 @@ def get_geometry_and_metadata_from_coords(layer: str, lat: float, lon: float, cr
             "polygon": int(reference_data.get("poligono")),
             "parcel": int(reference_data.get("parcela")),
         }
-        geometry, metadata = get_geometry_and_metadata(layer, data)
+        geometry, metadata = get_geometry_and_metadata_cadastral(layer, data)
 
     elif layer == "recinto":
         logger.info(f"Searching for enclosure's data in the layer {layer}...")
@@ -67,11 +67,11 @@ def get_geometry_and_metadata_from_coords(layer: str, lat: float, lon: float, cr
 if __name__ == '__main__':
 
     layer = "parcela"
-    lat = 42.465489 
-    lng = -2.295612
+    lat = 37.265840
+    lng = -4.593406 
     reference = None
 
-    geometry, metadata = get_geometry_and_metadata_from_coords(
+    geometry, metadata = get_geometry_and_metadata_coords(
         layer,
         lat,
         lng

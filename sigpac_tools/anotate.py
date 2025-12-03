@@ -70,7 +70,7 @@ def __query(
     response.raise_for_status()
     return response.json()
 
-def get_geometry_and_metadata(layer: str, data: dict):
+def get_geometry_and_metadata_cadastral(layer: str, data: dict):
     """Get the metadata of the given location from the SIGPAC database
 
     The search can be done by specifying the layer, province, municipality, polygon and parcel.
@@ -172,8 +172,6 @@ def extract_geometry(full_json: dict) -> dict:
 
     if not all_geometries:
         raise ValueError("No geometries found in the provided JSON data.")
-
-    logger.info("Found full metadata and geometry info for parcel.")
 
     # Merge all geometries into one (union of polygons)
     merged_geometry = unary_union(all_geometries)
@@ -297,16 +295,16 @@ if __name__ == '__main__':
 
     layer = "parcela"
     data = {
-        "province": 26,
-        "municipality": 2,
+        "province": 14,
+        "municipality": 48,
         "polygon": 1,
-        "parcel": 1,
-        # "enclosure": 2,
+        "parcel": 199,
+        # "enclosure": 1,
         # "aggregate": 0,
         # "zone": 0
     }
 
-    metadata, geometry = get_geometry_and_metadata(
+    metadata, geometry = get_geometry_and_metadata_cadastral(
         layer,
         data
     )
