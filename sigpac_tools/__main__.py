@@ -11,152 +11,154 @@ def get_parser():
         dest="command", help="Available commands")
     subparsers.required = True
 
-    # Search command
+    # # Search command
 
-    search_parser = subparsers.add_parser(
-        "search", help="Search for a reference in the SIGPAC database"
-    )
-    search_parser.add_argument(
-        "--community",
-        type=int,
-        help="Community of the location",
-        required=False,
-        metavar="INT",
-    )
-    search_parser.add_argument(
-        "--province",
-        type=int,
-        help="Province of the location",
-        required=False,
-        metavar="INT",
-    )
-    search_parser.add_argument(
-        "--municipality",
-        type=int,
-        help="Municipality of the location",
-        required=False,
-        metavar="INT",
-    )
-    search_parser.add_argument(
-        "--polygon",
-        type=int,
-        help="Polygon of the location",
-        required=False,
-        metavar="INT",
-    )
-    search_parser.add_argument(
-        "--parcel",
-        type=int,
-        help="Parcel of the location",
-        required=False,
-        metavar="INT",
-    )
+    # search_parser = subparsers.add_parser(
+    #     "search", help="Search for a reference in the SIGPAC database"
+    # )
+    # search_parser.add_argument(
+    #     "--community",
+    #     type=int,
+    #     help="Community of the location",
+    #     required=False,
+    #     metavar="INT",
+    # )
+    # search_parser.add_argument(
+    #     "--province",
+    #     type=int,
+    #     help="Province of the location",
+    #     required=False,
+    #     metavar="INT",
+    # )
+    # search_parser.add_argument(
+    #     "--municipality",
+    #     type=int,
+    #     help="Municipality of the location",
+    #     required=False,
+    #     metavar="INT",
+    # )
+    # search_parser.add_argument(
+    #     "--polygon",
+    #     type=int,
+    #     help="Polygon of the location",
+    #     required=False,
+    #     metavar="INT",
+    # )
+    # search_parser.add_argument(
+    #     "--parcel",
+    #     type=int,
+    #     help="Parcel of the location",
+    #     required=False,
+    #     metavar="INT",
+    # )
 
     # Locate command
 
-    geom_parser = subparsers.add_parser(
-        "geometry",
-        help="Locate a geometry given the coordinates in the SIGPAC database",
+    find_coords = subparsers.add_parser(
+        "find-coords",
+        help="Find geometry and metadata in the SIGPAC database from the coordinates.",
     )
-    geom_parser.add_argument(
+    find_coords.add_argument(
         "--layer",
         choices=["parcela", "recinto"],
         help="Layer to search from",
         metavar="STRING",
         required=True,
     )
-    geom_parser.add_argument(
+    find_coords.add_argument(
         "--lat",
         type=float,
         help="Latitude of the location",
         metavar="FLOAT",
         required=True,
     )
-    geom_parser.add_argument(
+    find_coords.add_argument(
         "--lon",
         type=float,
         help="Longitude of the location",
         metavar="FLOAT",
         required=True,
     )
-    geom_parser.add_argument(
-        "--reference",
-        type=int,
-        help="Reference to search for",
+    find_coords.add_argument(
+        "--crs",
+        type=str,
+        help="Coordinate Reference System",
+        metavar="STR",
         required=False,
-        metavar="INT",
+        default="4258"
     )
 
-    # Get metadata command
+    # Anotate command
 
-    annotate_parser = subparsers.add_parser(
-        "get-metadata", help="Get metadata of a location in the SIGPAC database"
+    find_data = subparsers.add_parser(
+        "find-data",
+        help="Find geometry and metadata in the SIGPAC database from address data."
     )
-    annotate_parser.add_argument(
+    find_data.add_argument(
         "--layer",
         choices=["parcela", "recinto"],
         help="Layer to search from",
         metavar="STRING",
         required=True,
     )
-    annotate_parser.add_argument(
+    find_data.add_argument(
         "--province",
         type=int,
         help="Province of the location",
         metavar="INT",
         required=True,
     )
-    annotate_parser.add_argument(
-        "--aggregate",
-        type=int,
-        default=0,
-        help="Aggregate of the location",
-        metavar="INT",
-    )
-    annotate_parser.add_argument(
-        "--zone", type=int, default=0, help="Zone of the location", metavar="INT"
-    )
-    annotate_parser.add_argument(
+    find_data.add_argument(
         "--municipality",
         type=int,
         help="Municipality of the location",
         metavar="INT",
         required=True,
     )
-    annotate_parser.add_argument(
+    find_data.add_argument(
         "--polygon",
         type=int,
         help="Polygon of the location",
         metavar="INT",
         required=True,
     )
-    annotate_parser.add_argument(
+    find_data.add_argument(
         "--parcel",
         type=int,
         help="Parcel of the location",
         metavar="INT",
         required=True,
     )
-    annotate_parser.add_argument(
+    find_data.add_argument(
         "--enclosure",
         type=int,
         help="Enclosure of the location",
         required=False,
         metavar="INT",
     )
-
-    # Find cadastral registry command
-
-    find_parser = subparsers.add_parser(
-        "find", help="Find a cadastral registry in the SIGPAC database"
+    find_data.add_argument(
+        "--aggregate",
+        type=int,
+        default=0,
+        help="Aggregate of the location",
+        metavar="INT",
     )
-    find_parser.add_argument(
-        "--registry",
-        "-r",
+    find_data.add_argument(
+        "--zone", type=int, default=0, help="Zone of the location", metavar="INT"
+    )
+
+    # Find command
+
+    find_cadastral_parser = subparsers.add_parser(
+        "find-cadastral",
+        help="Find geometry and metadata in the SIGPAC database from cadastral reference."
+    )
+    find_cadastral_parser.add_argument(
+        "--ref",
         type=str,
-        help="Cadastral registry to search for",
+        help="Parcel's SIGPAC cadastral reference (20 chars).",
         required=True,
-        metavar="STRING",
+        metavar="STR",
     )
 
     return parser
@@ -166,65 +168,75 @@ def main():
     args, _ = get_parser().parse_known_args()
 
     match args.command:
-        case "search":
-            from sigpac_tools.search import search
-            import json
+        # case "search":
+        #     from sigpac_tools.search import search
+        #     import json
 
-            data = {
-                "community": args.community,
-                "province": args.province,
-                "municipality": args.municipality,
-                "polygon": args.polygon,
-                "parcel": args.parcel,
-            }
-            search_res = search(data)
-            logger.info(f"Search results:\n{json.dumps(search_res, indent=2)}")
-            return search_res
+        #     data = {
+        #         "community": args.community,
+        #         "province": args.province,
+        #         "municipality": args.municipality,
+        #         "polygon": args.polygon,
+        #         "parcel": args.parcel,
+        #     }
+        #     search_res = search(data)
+        #     logger.info(f"Search results:\n{json.dumps(search_res, indent=2)}")
+        #     return search_res
 
-        case "geometry":
-            from sigpac_tools.locate import geometry_from_coords
+        case "find-coords":
+            from sigpac_tools.locate import get_geometry_and_metadata_coords
             import json
 
             layer = args.layer
             lat = args.lat
             lon = args.lon
-            reference = args.reference
-            geom = geometry_from_coords(layer, lat, lon, reference)
+            crs = args.crs
+            geometry, metadata = get_geometry_and_metadata_coords(layer, lat, lon, crs)
             logger.info(
-                f"Geometry for coords ({lat}, {lon}):\n{json.dumps(geom, indent=2)}"
+                f"Geometry for coords ({lat}, {lon}):\n{str(json.dumps(geometry, indent=2))[:500]}\n..."
             )
-            return geom
+            logger.info(
+                f"Metadata for coords ({lat}, {lon}):\n{str(json.dumps(metadata, indent=2))[:500]}\n..."
+            )
+            return geometry, metadata
 
-        case "get-metadata":
-            from sigpac_tools.anotate import get_metadata
+        case "find-data":
+            from sigpac_tools.anotate import get_geometry_and_metadata_cadastral
             import json
 
             layer = args.layer
             data = {
                 "province": args.province,
-                "aggregate": args.aggregate,
-                "zone": args.zone,
                 "municipality": args.municipality,
                 "polygon": args.polygon,
                 "parcel": args.parcel,
                 "enclosure": args.enclosure,
+                "aggregate": args.aggregate,
+                "zone": args.zone,
             }
-            metadata = get_metadata(layer, data)
-            logger.info(f"Metadata:\n{json.dumps(metadata, indent=2)}")
-            return metadata
-        case "find":
+            geometry, metadata = get_geometry_and_metadata_cadastral(layer, data)
+            logger.info(
+                f"Geometry for data:\n{str(json.dumps(geometry, indent=2))[:500]}\n..."
+            )
+            logger.info(
+                f"Metadata for data:\n{str(json.dumps(metadata, indent=2))[:500]}\n..."
+            )
+            return geometry, metadata
+        
+        case "find-cadastral":
             from sigpac_tools.find import find_from_cadastral_registry
             import json
 
-            registry = args.registry
-            geom, metadata = find_from_cadastral_registry(registry)
+            ref = args.ref
+            geometry, metadata = find_from_cadastral_registry(ref)
             logger.info(
-                f"Geometry for cadastral registry {registry}:\n{json.dumps(geom, indent=2)}"
+                f"Geometry for cadastral registry {ref}:\n{str(json.dumps(geometry, indent=2))[:500]}\n..."
             )
             logger.info(
-                f"Metadata for cadastral registry {registry}:\n{json.dumps(metadata, indent=2)}"
+                f"Metadata for cadastral registry {ref}:\n{str(json.dumps(metadata, indent=2))[:500]}\n..."
             )
-            return geom, metadata
+            return geometry, metadata
+        
         case _:
             raise ValueError("Invalid command")
 

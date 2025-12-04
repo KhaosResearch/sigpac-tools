@@ -7,7 +7,7 @@ from sigpac_tools.utils import read_cadastral_registry
 logger = structlog.get_logger()
 
 
-def find_from_cadastral_registry(cadastral_reg: str):
+def find_from_cadastral_registry(cadastral_ref: str):
     """
     Find the geometry and metadata of a cadastral reference in the SIGPAC database. The reference must be rural. Urban references are not supported.
 
@@ -45,7 +45,7 @@ def find_from_cadastral_registry(cadastral_reg: str):
     NotImplementedError
         If the reference is urban
     """
-    reg = read_cadastral_registry(cadastral_reg)
+    reg = read_cadastral_registry(cadastral_ref)
 
     # Search for coordinates
 
