@@ -9,9 +9,9 @@ def build_cadastral_reference(province: str, municipality: str, polygon: str, pa
     Parameters
     ----------
     province (str):
-        Province data. ID-NAME format.
+        Province data. Max: 2 digits.
     municipality (str):
-        Municipality data. ID-NAME format.
+        Municipality data. Max: 3 digits.
     polygon (str):
         Polygon ID. Max: 3 digits.
     parcel (str):
@@ -28,8 +28,9 @@ def build_cadastral_reference(province: str, municipality: str, polygon: str, pa
     """
 
     # --- 1. Prepare base components ---
-    prov = province.split('-')[0].zfill(2)
-    muni = municipality.split('-')[0].zfill(3)
+    
+    prov = str(province).zfill(2)
+    muni = str(municipality).zfill(3)
     poly = str(polygon).zfill(3)
     parcel_id = str(parcel).zfill(5)
     enclosure_id = str(enclosure).zfill(4)
@@ -172,10 +173,10 @@ def validate_cadastral_registry(reference: str) -> None:
             )
 
 if __name__ == '__main__':
-    prov = 14,
-    muni = 48,
-    poly = 1,
-    parcel = 199,
+    prov = 14
+    muni = 48
+    poly = 1
+    parcel = 199
 
     syn_cadastral_ref = build_cadastral_reference(prov, muni, poly, parcel)
     logger.info(f"Synthetic cadastral reference generated: {syn_cadastral_ref}")

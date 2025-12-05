@@ -195,6 +195,24 @@ def get_parser():
         metavar="INT",
         required=True,
     )
+    
+    build_cadastral.add_argument(
+        "--enclosure",
+        type=int,
+        help="Enclosure code. Default is 0.",
+        metavar="INT",
+        required=False,
+        default=0,
+    )
+
+    build_cadastral.add_argument(
+        "--section",
+        type=str,
+        help="Section character (A-Z). Default is 'A'.",
+        metavar="STR",
+        required=False,
+        default='A',
+    )
 
     return parser
 
@@ -240,7 +258,7 @@ def main():
             import json
 
             layer = args.layer
-            
+
             province= args.province
             municipality= args.municipality
             polygon= args.polygon
@@ -275,13 +293,16 @@ def main():
         case "build-cadastral":
             from sigpac_tools.generate import build_cadastral_reference
 
-            data = {
-                "province": args.province,
-                "municipality": args.municipality,
-                "polygon": args.polygon,
-                "parcel": args.parcel,
-            }
-            cadastral_ref = build_cadastral_reference(layer, data)
+            province= args.province
+            municipality= args.municipality
+            polygon= args.polygon
+            parcel= args.parcel
+            enclosure = args.enclosure
+            section = args.section
+
+            cadastral_ref = build_cadastral_reference(
+                province, municipality, polygon, parcel, enclosure, section
+            )
             logger.info(
                 f"Cadastral reference generated:{cadastral_ref}"
             )

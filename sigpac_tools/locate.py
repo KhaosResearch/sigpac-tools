@@ -47,13 +47,13 @@ def get_geometry_and_metadata_coords(layer: str, lat: float, lon: float, crs: st
         # Make additional SIGPAC API call to get all of the parcel's data
         reference_data = features_and_metadata.get(
             "features")[0].get("properties")
-        data = {
-            "province": int(reference_data.get("provincia")),
-            "municipality": int(reference_data.get("municipio")),
-            "polygon": int(reference_data.get("poligono")),
-            "parcel": int(reference_data.get("parcela")),
-        }
-        geometry, metadata = get_geometry_and_metadata_cadastral(layer, data)
+
+        province= int(reference_data.get("provincia"))
+        municipality= int(reference_data.get("municipio"))
+        polygon= int(reference_data.get("poligono"))
+        parcel= int(reference_data.get("parcela"))
+
+        geometry, metadata = get_geometry_and_metadata_cadastral(layer, province, municipality, polygon, parcel)
 
     elif layer == "recinto":
         logger.info(f"Searching for enclosure's data in the layer {layer}...")

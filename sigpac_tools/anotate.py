@@ -303,19 +303,18 @@ def extract_metadata(response_json: dict, layer: str) -> dict:
 if __name__ == '__main__':
 
     layer = "parcela"
-    data = {
-        "province": 14,
-        "municipality": 48,
-        "polygon": 1,
-        "parcel": 199,
-        # "enclosure": 1,
-        # "aggregate": 0,
-        # "zone": 0
-    }
+
+    province= 14
+    municipality= 48
+    polygon= 1
+    parcel= 199
+    # enclosure= 1
+    # aggregate= 0
+    # zone= 0
 
     metadata, geometry = get_geometry_and_metadata_cadastral(
-        layer,
-        data
+        layer,province, municipality, polygon, parcel
     )
+
     logger.debug(f"METADATA:\n\n{str(metadata)[:500]}\n...\n\n")
     logger.debug(f"GEOMETRY:\n\n{str(geometry)[:500]}\n...\n\n")
