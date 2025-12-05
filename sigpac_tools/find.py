@@ -46,11 +46,20 @@ def find_from_cadastral_registry(cadastral_ref: str):
         If the reference is urban
     """
     reg = read_cadastral_registry(cadastral_ref)
+    
+    province= reg.get("province")
+    municipality= reg.get("municipality")
+    polygon= reg.get("polygon")
+    parcel= reg.get("parcel")
+    enclosure= reg.get("id_inm")
+
+    layer = "recinto" if enclosure else "parcela"
 
     # Search for coordinates
 
     geometry, metadata = get_geometry_and_metadata_cadastral(
-        layer="parcela", data=reg)
+        layer, province, municipality, polygon, parcel, enclosure
+    )
 
     return geometry, metadata
 
