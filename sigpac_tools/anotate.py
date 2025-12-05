@@ -71,7 +71,7 @@ def __query(
     return response.json()
 
 
-def get_geometry_and_metadata_cadastral(layer: str, data: dict):
+def get_geometry_and_metadata_cadastral(layer: str, province: int = None, municipality: int = None, polygon: int = None, parcel: int = None, enclosure: int = None, aggregate: int = 0, zone: int = 0):
     """Get the metadata of the given location from the SIGPAC database
 
     The search can be done by specifying the layer, province, municipality, polygon and parcel.
@@ -79,10 +79,22 @@ def get_geometry_and_metadata_cadastral(layer: str, data: dict):
 
     Parameters
     ----------
-    layer : str
+    layer : int
         Layer to search from ("parcela", "recinto")
-    data : dict
-        Dictionary with the data of the location to search. It must be a dictionary with the following keys: [ province, municipality, aggregate, zone, polygon, parcel ]
+    province: int
+        Province code. 
+    municipality: int
+        Municipality code.
+    polygon: int
+        Polygon code.
+    parcel: int
+        Parcel code.
+    enclosure: int
+        Enclosure code.
+    aggregate: int
+        Aggregate code.
+    zone: int
+        Zone code.
 
     Returns
     -------
@@ -102,46 +114,38 @@ def get_geometry_and_metadata_cadastral(layer: str, data: dict):
         raise KeyError(
             "Layer not supported. Supported layers: ['parcela', 'recinto']")
 
-    prov = data.get("province", None)
-    muni = data.get("municipality", None)
-    polg = data.get("polygon", None)
-    parc = data.get("parcel", None)
-    encl = data.get("enclosure", None)
-    aggr = data.get("aggregate", 0)
-    zone = data.get("zone", 0)
-
-    if not prov:
+    if not province:
         raise ValueError("Province not specified")
-    if not muni:
+    if not municipality:
         raise ValueError("Municipality not specified")
-    if not polg:
+    if not polygon:
         raise ValueError("Polygon not specified")
-    if not parc:
+    if not parcel:
         raise ValueError("Parcel not specified")
-    if not encl and layer == "recinto":
+    if not enclosure and layer == "recinto":
         raise ValueError("Enclosure not specified")
 
     logger.info(
-        f"Searching for the data of the location (province {prov}, municipality {muni}, polygon {polg}, parcel {parc}) in the SIGPAC database..."
+        f"Searching for the data of the location (province {province}, municipality {municipality}, polygon {polygon}, parcel {parcel}) in the SIGPAC database..."
     )
 
     res = __query(
         layer=layer,
-        province=prov,
-        municipality=muni,
-        polygon=polg,
-        parcel=parc,
-        enclosure=encl,
-        aggregate=aggr,
+        province=province,
+        municipality=municipality,
+        polygon=polygon,
+        parcel=parcel,
+        enclosure=enclosure,
+        aggregate=aggregate,
         zone=zone,
     )
     if res is None:
         raise ValueError(
-            f"The location (province {prov}, municipality {muni}, polygon {polg}, parcel {parc}) does not exist in the SIGPAC database. Please check the data and try again."
+            f"The location (province {province}, municipality {municipality}, polygon {polygon}, parcel {parcel}) does not exist in the SIGPAC database. Please check the data and try again."
         )
     else:
         logger.info(
-            f"Data of the location (province {prov}, municipality {muni}, polygon {polg}, parcel {parc}{f', enclosure {encl}' if layer == 'recinto' else ''}) found in the SIGPAC database."
+            f"Data of the location (province {province}, municipality {municipality}, polygon {polygon}, parcel {parcel}{f', enclosure {enclosure}' if layer == 'recinto' else ''}) found in the SIGPAC database."
         )
 
     geometry = extract_geometry(res)
@@ -299,19 +303,18 @@ def extract_metadata(response_json: dict, layer: str) -> dict:
 if __name__ == '__main__':
 
     layer = "parcela"
-    data = {
-        "province": 14,
-        "municipality": 48,
-        "polygon": 1,
-        "parcel": 199,
-        # "enclosure": 1,
-        # "aggregate": 0,
-        # "zone": 0
-    }
+
+    province= 14
+    municipality= 48
+    polygon= 1
+    parcel= 199
+    # enclosure= 1
+    # aggregate= 0
+    # zone= 0
 
     metadata, geometry = get_geometry_and_metadata_cadastral(
-        layer,
-        data
+        layer,province, municipality, polygon, parcel
     )
+
     logger.debug(f"METADATA:\n\n{str(metadata)[:500]}\n...\n\n")
     logger.debug(f"GEOMETRY:\n\n{str(geometry)[:500]}\n...\n\n")

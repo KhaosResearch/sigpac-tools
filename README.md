@@ -29,54 +29,31 @@ python -m pip install git+https://github.com/KhaosResearch/sigpac-tools
 
 Once the library is installed, you can use it in your Python code. The library provides a set of tools to work with the SIGPAC data, these are the main features:
 
-### Search for an specific plot
+### Get plot information from cadastral data
 
-You can search for an specific plot using the `search` function in the `search` module. This function will return a list of plots that match the search criteria.
-
-```python
-from sigpac_tools.search import search
-
-data = {
-    "community": 1,
-    "province": 1,
-    "municipality": 8,
-    "polygon": 8,
-    "parcel": 572
-}
-
-geojson = search(data)
-```
-
-It is important to note that the `search` function will return a GeoJSON object with the information of the plots that match the search criteria. The `data` dictionary must contain at least the 'province' or the 'community' key to return a valid result. Note that all the keys must be in lower case.
-
-### Get the information of a plot
-
-You can get the information of a plot using the `get_geometry_and_metadata_cadastral` function in the `anotate` module. This function will return a tuple of dictionaries with the information of the plot, given the same data as the `search` function.
+You can get the information of a plot using the `get_geometry_and_metadata_cadastral` function in the `anotate` module. This function will return a tuple of dictionaries with the geometry and metadata of the plot, given the cadastral data search criteria.
 
 ```python
 from sigpac_tools.anotate import get_geometry_and_metadata_cadastral
 
 layer = "parcela"
-layer = "parcela"
-data = {
-    "province": 14,
-    "municipality": 48,
-    "polygon": 1,
-    "parcel": 199,
-    # "enclosure": 1,
-    # "aggregate": 0,
-    # "zone": 0
-}
+
+province= 14
+municipality= 48
+polygon= 1
+parcel= 199
+# enclosure= 1
+# aggregate= 0
+# zone= 0
 
 metadata, geometry = get_geometry_and_metadata_cadastral(
-    layer,
-    data
+    layer,province, municipality, polygon, parcel
 )
 ```
 
 > `enclosure` is only necesary if the `layer` is "recinto". `aggregate` and `zone` are optional and depend on the location of the parcel or enclosure searched for.
 
-### Get the geometry of a plot
+### Get plot information from plot coordinates
 
 You can also get the geometry and metadata of the plot using the `get_geometry_and_metadata_coords` function in the `locate` module. This function will return a both the GeoJSON object with the geometry of the plot and the metadata dictionary. 
 
@@ -98,7 +75,7 @@ geometry, metadata = get_geometry_and_metadata_coords(
 ```
 > Default value for `crs` is already set, but users may change it if the they need it.
 
-### Get information from a specific cadastral registry
+### Get plot information from a specific cadastral registry
 
 Known a cadastral registry, you can get the polygon and metadata from it using the `find_from_cadastral_registry` from the module `find`. 
 This function will return a tuple with a GeoJSON object of the polygon and a dictionary with the metadata of the plot. It will only return the metadata of the "parcela" layer.
@@ -115,7 +92,22 @@ from sigpac_tools.find import find_from_cadastral_registry
 cadastral_registry = "14048A001001990000RM"
 geometry, metadata = find_from_cadastral_registry(cadastral_registry)
 ```
+### Generate synthetic Sigpac cadastral registry
+Provided with some cadastral data, a synthetic rural cadastral registry can be generated using the `buidl_cadastral_reference` from the `generate` module. This registry will be valid within the scope of the `find_from_cadastral_registry` method. It cannot be used against any official SIGPAC database.
+```python
+from sigpac_tools.generate import build_cadastral_reference
 
+prov = 14,
+muni = 48,
+poly = 1,
+parcel = 199,
+# encl = 0
+# section = 'A'
+
+syn_cadastral_ref = build_cadastral_reference(prov, muni, poly, parcel)
+
+geometry, metadata = find_from_cadastral_registry(syn_cadastral_ref)
+```
 
 ## Acknowledgements
 
