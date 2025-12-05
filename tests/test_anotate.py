@@ -1,5 +1,5 @@
 import pytest
-from sigpac_tools.anotate import get_metadata
+from sigpac_tools.anotate import get_geometry_and_metadata_cadastral
 
 
 class TestGetMetadata:
@@ -12,7 +12,7 @@ class TestGetMetadata:
         }
 
         with pytest.raises(ValueError, match="Layer not specified"):
-            get_metadata("", data)
+            get_geometry_and_metadata_cadastral("", data)
 
     def test_invalid_layer(self):
         data = {
@@ -23,7 +23,7 @@ class TestGetMetadata:
         }
 
         with pytest.raises(KeyError):
-            get_metadata("invalid_layer", data)
+            get_geometry_and_metadata_cadastral("invalid_layer", data)
 
     def test_missing_province(self):
         data = {
@@ -33,7 +33,7 @@ class TestGetMetadata:
         }
 
         with pytest.raises(ValueError):
-            get_metadata("parcela", data)
+            get_geometry_and_metadata_cadastral("parcela", data)
 
     def test_missing_municipality(self):
         data = {
@@ -43,7 +43,7 @@ class TestGetMetadata:
         }
 
         with pytest.raises(ValueError):
-            get_metadata("parcela", data)
+            get_geometry_and_metadata_cadastral("parcela", data)
 
     def test_missing_polygon(self):
         data = {
@@ -53,7 +53,7 @@ class TestGetMetadata:
         }
 
         with pytest.raises(ValueError):
-            get_metadata("parcela", data)
+            get_geometry_and_metadata_cadastral("parcela", data)
 
     def test_missing_parcel(self):
         data = {
@@ -63,7 +63,7 @@ class TestGetMetadata:
         }
 
         with pytest.raises(ValueError):
-            get_metadata("parcela", data)
+            get_geometry_and_metadata_cadastral("parcela", data)
 
     def test_missing_enclosure_recinto_layer(self):
         data = {
@@ -74,7 +74,7 @@ class TestGetMetadata:
         }
 
         with pytest.raises(ValueError):
-            get_metadata("recinto", data)
+            get_geometry_and_metadata_cadastral("recinto", data)
 
 
 if __name__ == "__main__":

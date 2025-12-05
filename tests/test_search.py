@@ -22,7 +22,7 @@ class TestSearch:
         search(data)
 
         mock_get.assert_called_once_with(
-            f"{BASE_URL}/fega/ServiciosVisorSigpac/query/provincias/1.geojson"
+            f"{BASE_URL}/fega/serviciosvisorsigpac/query/provincias/1"
         )
 
     @patch("sigpac_tools.search.requests.get")
@@ -35,7 +35,7 @@ class TestSearch:
         search(data)
 
         mock_get.assert_called_once_with(
-            f"{BASE_URL}/fega/ServiciosVisorSigpac/query/municipios/1.geojson"
+            f"{BASE_URL}/fega/serviciosvisorsigpac/query/municipios/1"
         )
 
     @patch("sigpac_tools.search.requests.get")
@@ -48,7 +48,7 @@ class TestSearch:
         search(data)
 
         mock_get.assert_called_once_with(
-            f"{BASE_URL}/fega/ServiciosVisorSigpac/query/poligonos/1/1/0/0.geojson"
+            f"{BASE_URL}/fega/serviciosvisorsigpac/query/poligonos/1/1/0/0"
         )
 
     @patch("sigpac_tools.search.requests.get")
@@ -61,7 +61,7 @@ class TestSearch:
         search(data)
 
         mock_get.assert_called_once_with(
-            f"{BASE_URL}/fega/ServiciosVisorSigpac/query/parcelas/1/1/0/0/1.geojson"
+            f"{BASE_URL}/fega/serviciosvisorsigpac/query/parcelas/1/1/0/0/1"
         )
 
     @patch("sigpac_tools.search.requests.get")
@@ -74,7 +74,7 @@ class TestSearch:
         search(data)
 
         mock_get.assert_called_once_with(
-            f"{BASE_URL}/fega/ServiciosVisorSigpac/query/recintos/1/1/0/0/1/1.geojson"
+            f"{BASE_URL}/fega/serviciosvisorsigpac/query/recintos/1/1/0/0/1/1"
         )
 
     def test_missing_community_and_province(self):

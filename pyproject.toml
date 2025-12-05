@@ -21,7 +21,8 @@ classifiers = [
     "Topic :: Utilities"
 ]
 dependencies = [
-    "pyproj==3.6.1",
+    "pyproj>=3.6.1",
+    "shapely>=2.1.2",
     "requests==2.32.3",
     "structlog"
 ]

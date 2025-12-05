@@ -48,14 +48,15 @@ def search(data: dict) -> dict:
                     if parc:
                         logger.info("Searching for the parcel specified")
                         response = requests.get(
-                            f"{BASE_URL}/fega/ServiciosVisorSigpac/query/recintos/{prov}/{muni}/0/0/{polg}/{parc}.geojson"
+                            f"{BASE_URL}/fega/serviciosvisorsigpac/query/recintos/{prov}/{muni}/0/0/{polg}/{parc}"
                         )
                         geojson = response.json()
                         return geojson
                     else:
-                        logger.info(f"Searching for the parcels of the polygon {polg}")
+                        logger.info(
+                            f"Searching for the parcels of the polygon {polg}")
                         response = requests.get(
-                            f"{BASE_URL}/fega/ServiciosVisorSigpac/query/parcelas/{prov}/{muni}/0/0/{polg}.geojson"
+                            f"{BASE_URL}/fega/serviciosvisorsigpac/query/parcelas/{prov}/{muni}/0/0/{polg}"
                         )
                         geojson = response.json()
                         return geojson
@@ -64,21 +65,22 @@ def search(data: dict) -> dict:
                         f"Searching for the polygons of the municipality {muni}"
                     )
                     response = requests.get(
-                        f"{BASE_URL}/fega/ServiciosVisorSigpac/query/poligonos/{prov}/{muni}/0/0.geojson"
+                        f"{BASE_URL}/fega/serviciosvisorsigpac/query/poligonos/{prov}/{muni}/0/0"
                     )
                     geojson = response.json()
                     return geojson
             else:
-                logger.info(f"Searching for the municipalities of the province {prov}")
+                logger.info(
+                    f"Searching for the municipalities of the province {prov}")
                 response = requests.get(
-                    f"{BASE_URL}/fega/ServiciosVisorSigpac/query/municipios/{prov}.geojson"
+                    f"{BASE_URL}/fega/serviciosvisorsigpac/query/municipios/{prov}"
                 )
                 geojson = response.json()
                 return geojson
         else:
             logger.info(f"Searching for the provinces of the community {comm}")
             response = requests.get(
-                f"{BASE_URL}/fega/ServiciosVisorSigpac/query/provincias/{comm}.geojson"
+                f"{BASE_URL}/fega/serviciosvisorsigpac/query/provincias/{comm}"
             )
             geojson = response.json()
             return geojson

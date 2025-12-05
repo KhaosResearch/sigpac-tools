@@ -1,6 +1,6 @@
+import structlog
 import math
 import pyproj
-import structlog
 
 from sigpac_tools._globals import PROVINCES_BY_COMMUNITY
 
@@ -124,7 +124,8 @@ def read_cadastral_registry(registry: str) -> dict:
     """
     registry = registry.upper().replace(" ", "")
     if len(registry) != 20:
-        raise ValueError("The cadastral reference must have a length of 20 characters")
+        raise ValueError(
+            "The cadastral reference must have a length of 20 characters")
 
     reg_prov = registry[:2]
     reg_mun = registry[2:5]
@@ -151,6 +152,100 @@ def read_cadastral_registry(registry: str) -> dict:
         "id_inm": int(reg_id),
         "control": reg_control,
     }
+
+
+def build_cadastral_reference(province: str, municipality: str, polygon: str, parcel_id: str):
+    """
+    Generates a valid RURAL cadastral reference with calculated control characters.
+
+    Parameters
+    ----------
+    province (str):
+        Province data. ID-NAME format.
+    municipality (str):
+        Municipality data. ID-NAME format.
+    polygon (str):
+        Polygon ID. Max: 3 digits.
+    parcel_id (str):
+        Parcel ID. Max: 5 digits.
+
+    Returns
+    -------
+    cadastral_reference (str):
+        Synthetic valid RURAL cadastral reference.
+    """
+
+    # --- 1. Prepare base components ---
+    # Province (2 chars)
+    prov = province.split('-')[0].zfill(2)
+
+    # Municipality (3 chars)
+    muni = municipality.split('-')[0].zfill(3)
+
+    # Section (1 char) -> Use non-digit (e.g., "A") to ensure RURAL
+    section = "A"
+
+    # Polygon (3 chars)
+    poly = str(polygon).zfill(3)
+
+    # Parcel (5 chars)
+    parcel = str(parcel_id).zfill(5)
+
+    # ID (4 chars) -> usually zero unless you have sub-parcel identifiers
+    parcel_id_4 = "".zfill(4)
+
+    # --- 2. Combine without control characters ---
+    partial_ref = prov + muni + section + poly + parcel + parcel_id_4  # 18 chars
+
+    # --- 3. Calculate control characters (positions 19-20) ---
+    code = calculate_control_characters(partial_ref)
+
+    # --- 4. Final cadastral reference ---
+    cadastral_reference = partial_ref + code
+
+    logger.debug(f"FINAL CADASTRAL REF: {cadastral_reference}")
+    return cadastral_reference
+
+
+def calculate_control_characters(partial_ref: str) -> str:
+    """
+    Calculate the control characters for a given partial cadastral reference (without control characters)
+    """
+    res = "MQWERTYUIOPASDFGHJKLBZX"
+    pos = [13, 15, 12, 5, 4, 17, 9, 21, 3, 7, 1]
+
+    separated_ref = list(partial_ref)
+
+    sum_pd1 = 0
+    sum_sd2 = 0
+    mixt1 = 0
+
+    # First 7 characters
+    for i in range(7):
+        ch = separated_ref[i]
+        if ch.isdigit():
+            sum_pd1 += pos[i] * (ord(ch) - 48)
+        else:
+            sum_pd1 += pos[i] * ((ord(ch) - 63) if ord(ch)
+                                 > 78 else (ord(ch) - 64))
+
+    # Next 7 characters
+    for i in range(7):
+        ch = separated_ref[i + 7]
+        if ch.isdigit():
+            sum_sd2 += pos[i] * (ord(ch) - 48)
+        else:
+            sum_sd2 += pos[i] * ((ord(ch) - 63) if ord(ch)
+                                 > 78 else (ord(ch) - 64))
+
+    # Mixt calculation (last 4 digits before control)
+    for i in range(4):
+        mixt1 += pos[i + 7] * (ord(separated_ref[i + 14]) - 48)
+
+    code1 = res[(sum_pd1 + mixt1) % 23]
+    code2 = res[(sum_sd2 + mixt1) % 23]
+
+    return code1 + code2
 
 
 def validate_cadastral_registry(reference: str) -> None:
@@ -182,7 +277,8 @@ def validate_cadastral_registry(reference: str) -> None:
     res = "MQWERTYUIOPASDFGHJKLBZX"
 
     if len(reference) != 20:
-        raise ValueError("The cadastral reference must have a length of 20 characters")
+        raise ValueError(
+            "The cadastral reference must have a length of 20 characters")
     else:
         separated_ref = list(reference)
 
