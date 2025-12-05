@@ -161,6 +161,41 @@ def get_parser():
         metavar="STR",
     )
 
+    # Generate command
+
+    build_cadastral = subparsers.add_parser(
+        "build-cadastral",
+        help="Build  synthetic rural SIGPAC cadastral reference from search data."
+    )
+    build_cadastral.add_argument(
+        "--province",
+        type=int,
+        help="Province of the location",
+        metavar="INT",
+        required=True,
+    )
+    build_cadastral.add_argument(
+        "--municipality",
+        type=int,
+        help="Municipality of the location",
+        metavar="INT",
+        required=True,
+    )
+    build_cadastral.add_argument(
+        "--polygon",
+        type=int,
+        help="Polygon of the location",
+        metavar="INT",
+        required=True,
+    )
+    build_cadastral.add_argument(
+        "--parcel",
+        type=int,
+        help="Parcel of the location",
+        metavar="INT",
+        required=True,
+    )
+
     return parser
 
 
@@ -205,16 +240,16 @@ def main():
             import json
 
             layer = args.layer
-            data = {
-                "province": args.province,
-                "municipality": args.municipality,
-                "polygon": args.polygon,
-                "parcel": args.parcel,
-                "enclosure": args.enclosure,
-                "aggregate": args.aggregate,
-                "zone": args.zone,
-            }
-            geometry, metadata = get_geometry_and_metadata_cadastral(layer, data)
+            
+            province= args.province
+            municipality= args.municipality
+            polygon= args.polygon
+            parcel= args.parcel
+            enclosure= args.enclosure
+            aggregate= args.aggregate
+            zone= args.zone
+
+            geometry, metadata = get_geometry_and_metadata_cadastral(layer, province, municipality, polygon, parcel, enclosure, aggregate, zone)
             logger.info(
                 f"Geometry for data:\n{str(json.dumps(geometry, indent=2))[:500]}\n..."
             )
@@ -237,6 +272,20 @@ def main():
             )
             return geometry, metadata
         
+        case "build-cadastral":
+            from sigpac_tools.generate import build_cadastral_reference
+
+            data = {
+                "province": args.province,
+                "municipality": args.municipality,
+                "polygon": args.polygon,
+                "parcel": args.parcel,
+            }
+            cadastral_ref = build_cadastral_reference(layer, data)
+            logger.info(
+                f"Cadastral reference generated:{cadastral_ref}"
+            )
+            return cadastral_ref
         case _:
             raise ValueError("Invalid command")
 
