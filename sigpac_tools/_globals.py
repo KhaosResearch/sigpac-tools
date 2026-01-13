@@ -1,5 +1,5 @@
 # URL from SIGPAC service
-BASE_URL = "https://sigpac.mapama.gob.es"
+BASE_URL = "https://sigpac.mapa.gob.es"
 
 
 # Provinces divided into communities
