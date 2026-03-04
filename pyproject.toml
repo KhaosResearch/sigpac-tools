@@ -10,10 +10,10 @@ authors = [
 ]
 description = "Python SIGPAC client"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.13"
 classifiers = [
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.13",
     "Development Status :: 1 - Planning",
     "License :: OSI Approved :: MIT License",
     "Topic :: Scientific/Engineering",
@@ -21,7 +21,8 @@ classifiers = [
     "Topic :: Utilities"
 ]
 dependencies = [
-    "pyproj==3.6.1",
+    "pyproj>=3.7.0,<4.0.0",
+    "shapely>=2.1.2",
     "requests==2.32.3",
     "structlog"
 ]
@@ -32,4 +33,3 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["ruff", "pytest"]
-
