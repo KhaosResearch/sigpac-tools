@@ -61,7 +61,7 @@ def __query(
             )
     
     url = f"{BASE_URL}/fega/serviciosvisorsigpac/layerinfo/{layer}/{id}"
-    response = requests.get(url)
+    response = requests.get(url, verify=False)
     return response.json()
 
 
