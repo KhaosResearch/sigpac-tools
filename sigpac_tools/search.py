@@ -1,4 +1,4 @@
-import requests
+from sigpac_tools import http
 import structlog
 
 from sigpac_tools._globals import BASE_URL
@@ -47,7 +47,7 @@ def search(data: dict) -> dict:
                 if polg:
                     if parc:
                         logger.info("Searching for the parcel specified")
-                        response = requests.get(
+                        response = http.get(
                             f"{BASE_URL}/fega/serviciosvisorsigpac/query/recintos/{prov}/{muni}/0/0/{polg}/{parc}",
                             verify=False
                         )
@@ -55,7 +55,7 @@ def search(data: dict) -> dict:
                         return geojson
                     else:
                         logger.info(f"Searching for the parcels of the polygon {polg}")
-                        response = requests.get(
+                        response = http.get(
                             f"{BASE_URL}/fega/serviciosvisorsigpac/query/parcelas/{prov}/{muni}/0/0/{polg}",
                             verify=False
                         )
@@ -65,7 +65,7 @@ def search(data: dict) -> dict:
                     logger.info(
                         f"Searching for the polygons of the municipality {muni}"
                     )
-                    response = requests.get(
+                    response = http.get(
                         f"{BASE_URL}/fega/serviciosvisorsigpac/query/poligonos/{prov}/{muni}/0/0",
                         verify=False
                     )
@@ -73,7 +73,7 @@ def search(data: dict) -> dict:
                     return geojson
             else:
                 logger.info(f"Searching for the municipalities of the province {prov}")
-                response = requests.get(
+                response = http.get(
                     f"{BASE_URL}/fega/serviciosvisorsigpac/query/municipios/{prov}",
                     verify=False
                 )
@@ -81,7 +81,7 @@ def search(data: dict) -> dict:
                 return geojson
         else:
             logger.info(f"Searching for the provinces of the community {comm}")
-            response = requests.get(
+            response = http.get(
                 f"{BASE_URL}/fega/serviciosvisorsigpac/query/provincias/{comm}",
                 verify=False
             )

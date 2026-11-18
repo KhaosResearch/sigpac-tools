@@ -12,7 +12,7 @@ parcel_response = {"type": "FeatureCollection", "features": [{"id": "parcel"}]}
 
 
 class TestSearch:
-    @patch("sigpac_tools.search.requests.get")
+    @patch("sigpac_tools.http.get")
     def test_search_provinces(self, mock_get):
         mock_response = Mock()
         mock_response.json.return_value = provinces_response
@@ -22,10 +22,10 @@ class TestSearch:
         search(data)
 
         mock_get.assert_called_once_with(
-            f"{BASE_URL}/fega/serviciosvisorsigpac/query/provincias/1"
+            f"{BASE_URL}/fega/serviciosvisorsigpac/query/provincias/1", verify=False
         )
 
-    @patch("sigpac_tools.search.requests.get")
+    @patch("sigpac_tools.http.get")
     def test_search_municipalities(self, mock_get):
         mock_response = Mock()
         mock_response.json.return_value = municipalities_response
@@ -35,10 +35,10 @@ class TestSearch:
         search(data)
 
         mock_get.assert_called_once_with(
-            f"{BASE_URL}/fega/serviciosvisorsigpac/query/municipios/1"
+            f"{BASE_URL}/fega/serviciosvisorsigpac/query/municipios/1", verify=False
         )
 
-    @patch("sigpac_tools.search.requests.get")
+    @patch("sigpac_tools.http.get")
     def test_search_polygons(self, mock_get):
         mock_response = Mock()
         mock_response.json.return_value = polygons_response
@@ -48,10 +48,10 @@ class TestSearch:
         search(data)
 
         mock_get.assert_called_once_with(
-            f"{BASE_URL}/fega/serviciosvisorsigpac/query/poligonos/1/1/0/0"
+            f"{BASE_URL}/fega/serviciosvisorsigpac/query/poligonos/1/1/0/0", verify=False
         )
 
-    @patch("sigpac_tools.search.requests.get")
+    @patch("sigpac_tools.http.get")
     def test_search_parcels(self, mock_get):
         mock_response = Mock()
         mock_response.json.return_value = parcels_response
@@ -61,10 +61,10 @@ class TestSearch:
         search(data)
 
         mock_get.assert_called_once_with(
-            f"{BASE_URL}/fega/serviciosvisorsigpac/query/parcelas/1/1/0/0/1"
+            f"{BASE_URL}/fega/serviciosvisorsigpac/query/parcelas/1/1/0/0/1", verify=False
         )
 
-    @patch("sigpac_tools.search.requests.get")
+    @patch("sigpac_tools.http.get")
     def test_search_specific_parcel(self, mock_get):
         mock_response = Mock()
         mock_response.json.return_value = parcel_response
@@ -74,7 +74,7 @@ class TestSearch:
         search(data)
 
         mock_get.assert_called_once_with(
-            f"{BASE_URL}/fega/serviciosvisorsigpac/query/recintos/1/1/0/0/1/1"
+            f"{BASE_URL}/fega/serviciosvisorsigpac/query/recintos/1/1/0/0/1/1", verify=False
         )
 
     def test_missing_community_and_province(self):
