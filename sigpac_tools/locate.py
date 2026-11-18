@@ -1,4 +1,4 @@
-import requests
+from sigpac_tools import http
 import structlog
 
 from sigpac_tools._globals import BASE_URL, QUERY_URL
@@ -38,7 +38,7 @@ def get_geometry_and_metadata_coords(layer: str, lat: float, lon: float, crs: st
 
     url = f"{BASE_URL}/{QUERY_URL}/recinfobypoint/{crs}/{lon}/{lat}.geojson"
     logger.debug(f"SIGPAC endpoint: {url}")
-    response = requests.get(url)
+    response = http.get(url)
     features_and_metadata = response.json()
 
     if layer == "parcela":

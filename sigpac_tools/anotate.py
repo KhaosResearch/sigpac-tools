@@ -1,4 +1,4 @@
-import requests
+from sigpac_tools import http
 import structlog
 
 from collections import defaultdict
@@ -66,7 +66,7 @@ def __query(
 
     url = f"{BASE_URL}/{QUERY_URL}/{id}.geojson"
     logger.debug(f"SIGPAC endpoint: {url}")
-    response = requests.get(url)
+    response = http.get(url)
     response.raise_for_status()
     return response.json()
 
