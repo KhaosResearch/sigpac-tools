@@ -1,4 +1,4 @@
-import requests
+from sigpac_tools import http
 import structlog
 
 from sigpac_tools._globals import BASE_URL
@@ -66,7 +66,7 @@ def geometry_from_coords(layer: str, lat: float, lon: float, reference: int) -> 
 
     tile_x, tile_y = lng_lat_to_tile(lon, lat, 15)
 
-    response = requests.get(
+    response = http.get(
         f"{BASE_URL}/vectorsdg/vector/{layer}@3857/15.{tile_x}.{tile_y}.geojson",
         verify=False
     )
